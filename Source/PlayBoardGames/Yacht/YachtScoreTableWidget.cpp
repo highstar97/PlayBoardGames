@@ -1,0 +1,1 @@
+#include "YachtScoreTableWidget.h"
