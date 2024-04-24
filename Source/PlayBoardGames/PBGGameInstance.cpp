@@ -24,6 +24,10 @@ void UPBGGameInstance::Init()
 	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
 	if (OnlineSubsystem != nullptr)
 	{
+		if (IsDedicatedServerInstance())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("DEDICATED SERVER"));
+		}
 		UE_LOG(LogTemp, Warning, TEXT("Found Subsystem : %s"), *OnlineSubsystem->GetSubsystemName().ToString());
 		SessionInterface = OnlineSubsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
@@ -118,9 +122,6 @@ void UPBGGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 
 void UPBGGameInstance::OnFindSessionComplete(bool Success)
 {
-	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
-	if (!ensure(PBGPlayerController != nullptr)) return;
-
 	if (Success && SessionSearch.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Finish Find Session"));
@@ -148,7 +149,13 @@ void UPBGGameInstance::OnFindSessionComplete(bool Success)
 			ServerDatas.Add(ServerData);
 		}
 
-		PBGPlayerController->UpdateServerList(ServerDatas);
+		if (!ServerDatas.IsEmpty())
+		{
+			APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
+			if (!ensure(PBGPlayerController != nullptr)) return;
+
+			PBGPlayerController->UpdateServerList(ServerDatas);
+		}
 	}
 }
 

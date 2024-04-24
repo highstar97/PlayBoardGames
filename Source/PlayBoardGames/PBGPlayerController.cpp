@@ -57,8 +57,6 @@ void APBGPlayerController::TurnOnMainMenu()
 	if (!ensure(PBGMainMenu != nullptr)) return;
 
 	PBGMainMenu->SetUp();
-
-	UE_LOG(LogTemp, Warning, TEXT("Turn oning Controller : %s"), *this->GetName());
 }
 
 void APBGPlayerController::TurnOffMainMenu()
@@ -72,10 +70,13 @@ void APBGPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!ensure(PBGMainMenuClass != nullptr)) return;
-	PBGMainMenu = CreateWidget<UPBGMainMenuWidget>(this, PBGMainMenuClass);
-	if (!ensure(PBGMainMenu != nullptr)) return;
+	if (IsLocalPlayerController())
+	{
+		if (!ensure(PBGMainMenuClass != nullptr)) return;
+		PBGMainMenu = CreateWidget<UPBGMainMenuWidget>(this, PBGMainMenuClass);
+		if (!ensure(PBGMainMenu != nullptr)) return;
 
-	PBGMainMenu->SetMainMenuInterface(this);
-	TurnOnMainMenu();
+		PBGMainMenu->SetMainMenuInterface(this);
+		TurnOnMainMenu();
+	}
 }
