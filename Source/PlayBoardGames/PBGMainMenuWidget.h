@@ -2,10 +2,30 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "MainMenuInterface.h"
 #include "PBGMainMenuWidget.generated.h"
 
+class UWidgetSwitcher;
+class UWidget;
 class UButton;
 class UTextBlock;
+class UPanelWidget;
+class UEditableTextBox;
+
+USTRUCT()
+struct FServerData
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FString Name;
+
+	FString HostUserName;
+
+	uint16 CurrentPlayers;
+
+	uint16 MaxPlayers;
+};
 
 UCLASS()
 class PLAYBOARDGAMES_API UPBGMainMenuWidget : public UUserWidget
@@ -13,11 +33,19 @@ class PLAYBOARDGAMES_API UPBGMainMenuWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	// UPBGMainMenuWidget(const FObjectInitializer& Objectinitializer);
+	UPBGMainMenuWidget(const FObjectInitializer& Objectinitializer);
+
+	void SetServerList(TArray<FServerData> ServerDatas);
+
+	void SetMainMenuInterface(IMainMenuInterface* _MainMenuInterface) { this->MainMenuInterface = _MainMenuInterface; }
 
 	void SetUp();
 
 	void TearDown();
+
+	void UpdateServerList(TArray<FServerData> ServerDatas);
+
+	void SelectIndex(uint32 Index);
 
 protected:
 	virtual bool Initialize() override;
@@ -28,9 +56,33 @@ private:
 	UFUNCTION()
 	void ExitGame();
 
+	UFUNCTION()
+	void HostServer();
+	
+	UFUNCTION()
+	void JoinServer();
+
+	UFUNCTION()
+	void SwitchToSelectMenu();
+
+	UFUNCTION()
+	void SwitchToHostMenu();
+
+	UFUNCTION()
+	void SwitchToJoinMenu();
+
+	void UpdateChildren();
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Exit;
+
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* MenuSwitcher;
+
+// Select Menu Widget
+	UPROPERTY(meta = (BindWidget))
+	UWidget* SelectMenu;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Game1;
@@ -79,4 +131,39 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TextBlock_Game8;
+
+// Host Menu Widget
+	UPROPERTY(meta = (BindWidget))
+	UWidget* HostMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	UEditableTextBox* EditableTextBox_ServerHostName;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_CancelHost;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_HostServer;
+
+// Join Menu Widget
+	UPROPERTY(meta = (BindWidget))
+	UWidget* JoinMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_CancelJoin;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_MakeServer;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_JoinServer;
+
+	UPROPERTY(meta = (BindWidget))
+	UPanelWidget* ScrollBox_ServerList;
+
+	TSubclassOf<UUserWidget> ServerRowClass;
+
+	IMainMenuInterface* MainMenuInterface;
+
+	TOptional<uint32> SelectedIndex;
 };
