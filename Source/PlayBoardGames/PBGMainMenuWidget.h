@@ -35,8 +35,6 @@ class PLAYBOARDGAMES_API UPBGMainMenuWidget : public UUserWidget
 public:
 	UPBGMainMenuWidget(const FObjectInitializer& Objectinitializer);
 
-	void SetServerList(TArray<FServerData> ServerDatas);
-
 	void SetMainMenuInterface(IMainMenuInterface* _MainMenuInterface) { this->MainMenuInterface = _MainMenuInterface; }
 
 	void SetUp();
@@ -74,6 +72,8 @@ private:
 	void UpdateChildren();
 
 private:
+	IMainMenuInterface* MainMenuInterface;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Exit;
 
@@ -162,8 +162,6 @@ private:
 	UPanelWidget* ScrollBox_ServerList;
 
 	TSubclassOf<UUserWidget> ServerRowClass;
-
-	IMainMenuInterface* MainMenuInterface;
 
 	TOptional<uint32> SelectedIndex;
 };

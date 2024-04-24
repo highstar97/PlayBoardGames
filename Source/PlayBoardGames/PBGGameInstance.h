@@ -4,7 +4,6 @@
 #include "Engine/GameInstance.h"
 #include "OnlineSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "MainMenuInterface.h"
 #include "PBGGameInstance.generated.h"
 
 USTRUCT()
@@ -24,7 +23,7 @@ class FOnlineSessionSearch;
 class UPBGMainMenuWidget;
 
 UCLASS()
-class PLAYBOARDGAMES_API UPBGGameInstance : public UGameInstance, public IMainMenuInterface
+class PLAYBOARDGAMES_API UPBGGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
@@ -33,21 +32,16 @@ public:
 
 	virtual void Init() override;
 
-	UFUNCTION(BlueprintCallable)
-	void LoadMenu();
+	void Host();
 
-	UFUNCTION(Exec)
-	virtual void Host(FString ServerName) override;
+	void Join(uint32 Index);
 
-	UFUNCTION(Exec)
-	virtual void Join(uint32 Index) override;
-
-	virtual void  LoadMainMenu() override;
-
-	virtual void RefreshServerList() override;
+	void FindServerList();
 
 	void StartSession();
 
+	void SetDesiredServerName(FString _DesiredServerName) { DesiredServerName = _DesiredServerName; }
+	
 	TArray<FPBGGame> GetPBGGames() { return PBGGames; }
 
 private:
@@ -64,11 +58,6 @@ private:
 	void CreateSession();
 
 private:
-	UPROPERTY()
-	TSubclassOf<UUserWidget> PBGMainMenuClass;
-
-	UPBGMainMenuWidget* MainMenu;
-
 	IOnlineSessionPtr SessionInterface;
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;

@@ -7,6 +7,7 @@
 #include "Components/PanelWidget.h"
 
 #include "PBGGameInstance.h"
+#include "PBGPlayerController.h"
 #include "PBGServerRowWidget.h"
 
 UPBGMainMenuWidget::UPBGMainMenuWidget(const FObjectInitializer& Objectinitializer) : Super(Objectinitializer)
@@ -18,73 +19,41 @@ UPBGMainMenuWidget::UPBGMainMenuWidget(const FObjectInitializer& Objectinitializ
 	}
 }
 
-void UPBGMainMenuWidget::SetServerList(TArray<FServerData> ServerDatas)
-{
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
-
-	ScrollBox_ServerList->ClearChildren();
-
-	uint32 Index = 0;
-	for (const FServerData& ServerData : ServerDatas)
-	{
-		if (!ensure(ServerRowClass != nullptr)) return;
-		UPBGServerRowWidget* PBGServerRow = CreateWidget<UPBGServerRowWidget>(GetOwningPlayer(), ServerRowClass);
-		if (!ensure(PBGServerRow != nullptr)) return;
-
-		PBGServerRow->TextBlock_ServerName->SetText(FText::FromString(ServerData.Name));
-		PBGServerRow->TextBlock_HostUser->SetText(FText::FromString(ServerData.HostUserName));
-		PBGServerRow->TextBlock_ConnectionFraction->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), ServerData.CurrentPlayers, ServerData.MaxPlayers)));
-		PBGServerRow->Setup(this, Index);
-		++Index;
-
-		ScrollBox_ServerList->AddChild(PBGServerRow);
-	}
-}
-
 void UPBGMainMenuWidget::SetUp()
 {
 	this->AddToViewport();
 
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(MainMenuInterface);
+	if (!ensure(PBGPlayerController != nullptr)) return;
 
 	FInputModeUIOnly InputModeUIOnly;
 	InputModeUIOnly.SetWidgetToFocus(this->TakeWidget());
 	InputModeUIOnly.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	PlayerController->SetInputMode(InputModeUIOnly);
-	PlayerController->SetShowMouseCursor(true);
+	PBGPlayerController->SetInputMode(InputModeUIOnly);
+	PBGPlayerController->SetShowMouseCursor(true);
 }
 
 void UPBGMainMenuWidget::TearDown()
 {
 	this->RemoveFromParent();
 
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(MainMenuInterface);
+	if (!ensure(PBGPlayerController != nullptr)) return;
 
 	FInputModeGameOnly InputModeGameOnly;
-	PlayerController->SetInputMode(InputModeGameOnly);
-	PlayerController->SetShowMouseCursor(false);
+	PBGPlayerController->SetInputMode(InputModeGameOnly);
+	PBGPlayerController->SetShowMouseCursor(false);
 }
 
 void UPBGMainMenuWidget::UpdateServerList(TArray<FServerData> ServerDatas)
 {
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
-
 	ScrollBox_ServerList->ClearChildren();
 
 	uint32 Index = 0;
 	for (const FServerData& ServerData : ServerDatas)
 	{
+		if (!ensure(ServerRowClass != nullptr)) return;
 		UPBGServerRowWidget* PBGServerRow = CreateWidget<UPBGServerRowWidget>(GetOwningPlayer(), ServerRowClass);
 		if (!ensure(PBGServerRow != nullptr)) return;
 
@@ -149,13 +118,10 @@ void UPBGMainMenuWidget::NativeConstruct()
 
 void UPBGMainMenuWidget::ExitGame()
 {
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(MainMenuInterface);
+	if (!ensure(PBGPlayerController != nullptr)) return;
 
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
-
-	PlayerController->ConsoleCommand("quit");
+	PBGPlayerController->ConsoleCommand("quit");
 }
 
 void UPBGMainMenuWidget::HostServer()
@@ -207,7 +173,7 @@ void UPBGMainMenuWidget::SwitchToJoinMenu()
 	MenuSwitcher->SetActiveWidget(JoinMenu);
 
 	if (!ensure(MainMenuInterface != nullptr)) return;
-	MainMenuInterface->RefreshServerList();
+	MainMenuInterface->FindServerList();
 }
 
 void UPBGMainMenuWidget::UpdateChildren()

@@ -8,5 +8,10 @@ UCLASS()
 class PLAYBOARDGAMES_API APlayBoardGamesGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	APlayBoardGamesGameModeBase();
+
+protected:
+	virtual void PostLogin(APlayerController* NewPlayer);
 };

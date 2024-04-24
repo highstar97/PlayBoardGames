@@ -3,16 +3,12 @@
 #include "OnlineSessionSettings.h"
 
 #include "PBGMainMenuWidget.h"
+#include "PBGPlayerController.h"
 
 const static FName SERVER_NAME_SETTING_KEY = TEXT("Server Name");
 
 UPBGGameInstance::UPBGGameInstance()
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> BP_MainMenuClass(TEXT("/Game/Blueprints/MainMenu/WBP_MainMenu"));
-	if (!ensure(BP_MainMenuClass.Class != nullptr)) return;
-
-	PBGMainMenuClass = BP_MainMenuClass.Class;
-
 	// ToDo : Make it more simply.
 	PBGGames.Empty();
 	FPBGGame Null;
@@ -43,21 +39,8 @@ void UPBGGameInstance::Init()
 	GetEngine()->OnNetworkFailure().AddUObject(this, &UPBGGameInstance::OnNetworkFailure);
 }
 
-void UPBGGameInstance::LoadMenu()
+void UPBGGameInstance::Host()
 {
-	if (!ensure(PBGMainMenuClass != nullptr)) return;
-
-	MainMenu = CreateWidget<UPBGMainMenuWidget>(this, PBGMainMenuClass);
-	if (!ensure(MainMenu != nullptr)) return;
-
-	MainMenu->SetUp();
-
-	MainMenu->SetMainMenuInterface(this);
-}
-
-void UPBGGameInstance::Host(FString ServerName)
-{
-	DesiredServerName = ServerName;
 	if (SessionInterface.IsValid())
 	{
 		FNamedOnlineSession* ExistingSessionInterface = SessionInterface->GetNamedSession(NAME_GameSession);
@@ -77,23 +60,10 @@ void UPBGGameInstance::Join(uint32 Index)
 	if (!SessionInterface.IsValid()) return;
 	if (!SessionSearch.IsValid()) return;
 
-	if (MainMenu != nullptr)
-	{
-		MainMenu->TearDown();
-	}
-
 	SessionInterface->JoinSession(0, NAME_GameSession, SessionSearch->SearchResults[Index]);
 }
 
-void UPBGGameInstance::LoadMainMenu()
-{
-	APlayerController* PlayerController = GetFirstLocalPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
-
-	PlayerController->ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
-}
-
-void UPBGGameInstance::RefreshServerList()
+void UPBGGameInstance::FindServerList()
 {
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
@@ -122,10 +92,10 @@ void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 		return;
 	}
 
-	if (MainMenu != nullptr)
-	{
-		MainMenu->TearDown();
-	}
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
+	if (!ensure(PBGPlayerController != nullptr)) return;
+
+	PBGPlayerController->TurnOffMainMenu();
 
 	if (!ensure(GEngine != nullptr)) return;
 	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, TEXT("Hosting"));
@@ -134,7 +104,7 @@ void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
-	World->ServerTravel("/Game/Maps/Lobby?listen");
+	World->ServerTravel("/Game/Maps/Yacht?listen");
 	*/
 }
 
@@ -148,7 +118,10 @@ void UPBGGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 
 void UPBGGameInstance::OnFindSessionComplete(bool Success)
 {
-	if (Success && SessionSearch.IsValid() && MainMenu != nullptr)
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
+	if (!ensure(PBGPlayerController != nullptr)) return;
+
+	if (Success && SessionSearch.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Finish Find Session"));
 
@@ -175,7 +148,7 @@ void UPBGGameInstance::OnFindSessionComplete(bool Success)
 			ServerDatas.Add(ServerData);
 		}
 
-		MainMenu->SetServerList(ServerDatas);
+		PBGPlayerController->UpdateServerList(ServerDatas);
 	}
 }
 
@@ -201,7 +174,10 @@ void UPBGGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 
 void UPBGGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
 {
-	LoadMainMenu();
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
+	if (!ensure(PBGPlayerController != nullptr)) return;
+
+	PBGPlayerController->LoadToMainMenuLevel();
 }
 
 void UPBGGameInstance::CreateSession()
