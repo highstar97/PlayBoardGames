@@ -59,6 +59,7 @@ void UPBGMainMenuWidget::UpdateServerList(TArray<FServerData> ServerDatas)
 
 		PBGServerRow->TextBlock_ServerName->SetText(FText::FromString(ServerData.Name));
 		PBGServerRow->TextBlock_HostUser->SetText(FText::FromString(ServerData.HostUserName));
+		// TODO : Check CurrnePlayers
 		PBGServerRow->TextBlock_ConnectionFraction->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), ServerData.CurrentPlayers, ServerData.MaxPlayers)));
 		PBGServerRow->Setup(this, Index);
 		++Index;
@@ -139,12 +140,7 @@ void UPBGMainMenuWidget::JoinServer()
 	{
 		if (SelectedIndex.IsSet())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Selected Index : %d"), SelectedIndex.GetValue());
 			MainMenuInterface->Join(SelectedIndex.GetValue());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Selected Index not set"));
 		}
 	}
 }

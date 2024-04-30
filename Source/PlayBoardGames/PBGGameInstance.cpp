@@ -4,12 +4,13 @@
 
 #include "PBGMainMenuWidget.h"
 #include "PBGPlayerController.h"
+#include "PBGGameState.h"
 
 const static FName SERVER_NAME_SETTING_KEY = TEXT("Server Name");
 
 UPBGGameInstance::UPBGGameInstance()
 {
-	// ToDo : Make it more simply.
+	// TODO : Make it more simply.
 	PBGGames.Empty();
 	FPBGGame Null;
 	PBGGames.Add(Null);
@@ -28,6 +29,7 @@ void UPBGGameInstance::Init()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("DEDICATED SERVER"));
 		}
+
 		UE_LOG(LogTemp, Warning, TEXT("Found Subsystem : %s"), *OnlineSubsystem->GetSubsystemName().ToString());
 		SessionInterface = OnlineSubsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
@@ -77,6 +79,8 @@ void UPBGGameInstance::FindServerList()
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Starting Find Session"));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+
+		// TODO : Loading Widget Needed
 	}
 }
 
@@ -101,15 +105,10 @@ void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 
 	PBGPlayerController->TurnOffMainMenu();
 
-	if (!ensure(GEngine != nullptr)) return;
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, TEXT("Hosting"));
-
-	/*
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
-	World->ServerTravel("/Game/Maps/Yacht?listen");
-	*/
+	World->ServerTravel("/Game/Maps/Lobby?listen");
 }
 
 void UPBGGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
@@ -149,13 +148,10 @@ void UPBGGameInstance::OnFindSessionComplete(bool Success)
 			ServerDatas.Add(ServerData);
 		}
 
-		if (!ServerDatas.IsEmpty())
-		{
-			APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
-			if (!ensure(PBGPlayerController != nullptr)) return;
+		APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
+		if (!ensure(PBGPlayerController != nullptr)) return;
 
-			PBGPlayerController->UpdateServerList(ServerDatas);
-		}
+		PBGPlayerController->UpdateServerList(ServerDatas);
 	}
 }
 
@@ -170,9 +166,6 @@ void UPBGGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 		return;
 	}
 
-	if (!ensure(GEngine != nullptr)) return;
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, FString::Printf(TEXT("Joining %s"), *Address));
-
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController != nullptr)) return;
 
@@ -181,6 +174,7 @@ void UPBGGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 
 void UPBGGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
 {
+	// TODO : if In Lobby, Need to change... ( think : need new interface for Load to MainMenu )
 	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
 	if (!ensure(PBGPlayerController != nullptr)) return;
 

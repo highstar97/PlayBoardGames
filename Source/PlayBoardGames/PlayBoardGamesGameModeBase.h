@@ -13,5 +13,5 @@ public:
 	APlayBoardGamesGameModeBase();
 
 protected:
-	virtual void PostLogin(APlayerController* NewPlayer);
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 };

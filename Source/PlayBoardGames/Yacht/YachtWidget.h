@@ -6,8 +6,8 @@
 
 class UTextBlock;
 class UButton;
-class UYachtScoreChartWidget;
-class UYachtSlotWidget;
+class UYachtScoreTableWidget;
+class UYachtDiceSlotWidget;
 
 UCLASS()
 class PLAYBOARDGAMES_API UYachtWidget : public UUserWidget
@@ -41,10 +41,10 @@ protected:
 	UButton* Button_Roll;
 
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
-	UYachtScoreChartWidget* ScoreChartWidget;
+	UYachtScoreTableWidget* ScoreTableWidget;
 
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
-	UYachtSlotWidget* SlotWidget;
+	UYachtDiceSlotWidget* DiceSlotWidget;
 
 private:
 	int32 Player;
