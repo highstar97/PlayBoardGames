@@ -13,29 +13,39 @@ UCLASS()
 class PLAYBOARDGAMES_API UYachtWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	/*
+		
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	void Roll();
 
-protected:
-	virtual void NativeConstruct() override;
+	void UpdateValue(const TArray<int32>& ValueArray);
 
-private:
-	void UpdateTextPlayer();
+	void UpdateKeep(const TArray<bool>& KeepArray);
 
-	void UpdateTextLeft();
+	void UpdateTextBlock_YourNumber(const int32 YourNumber);
+
+	void UpdateTextBlock_PlayerNumber(const int32 PlayerNumber);
+
+	void UpdateTextBlock_RemainingTurn(const int32 RemainingTurn);
 
 	void PredictScore();
 
 	void UnPredictScore();
 
+	void InitDiceSlotWidget();
+
 protected:
+	virtual void NativeConstruct() override;
+
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
-	UTextBlock* TEXT_Player;
+	UTextBlock* TextBlock_YourNumber;
 
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
-	UTextBlock* TEXT_Lefts;
+	UTextBlock* TextBlock_PlayerNumber;
+
+	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UTextBlock* TextBlock_RemainingTurn;
 
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
 	UButton* Button_Roll;
@@ -45,10 +55,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
 	UYachtDiceSlotWidget* DiceSlotWidget;
-
-private:
-	int32 Player;
-
-	int32 LeftTurn;
-	*/
 };

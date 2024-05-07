@@ -4,6 +4,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "YachtGameMode.generated.h"
 
+class AYachtPlayerState;
+class AYachtGameState;
+
 UCLASS()
 class PLAYBOARDGAMES_API AYachtGameMode : public AGameModeBase
 {
@@ -12,6 +15,5 @@ class PLAYBOARDGAMES_API AYachtGameMode : public AGameModeBase
 public:
 	AYachtGameMode();
 
-protected:
 	virtual void PostLogin(APlayerController* NewPlayer);
 };

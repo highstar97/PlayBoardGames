@@ -13,10 +13,49 @@ class PLAYBOARDGAMES_API AYachtPlayerController : public APlayerController
 
 public:
 	AYachtPlayerController();
+	
+	virtual void InitPlayerState() override;
 
 	void TurnOnYachtWidget();
 
 	void TurnOffYachtWidget();
+
+	bool IsPlayerTurn();
+
+	bool IsTurnRemain();
+
+	UFUNCTION(Server, reliable)
+	void Server_NextTurn();
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdateValueToAllClient(const TArray<int32>& ValueArray);
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateValue(const TArray<int32>& ValueArray);
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdateKeepToAllClient(const TArray<bool>& KeepArray);
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateKeep(const TArray<bool>& KeepArray);
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdateYourNumberToAllClient();
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateYourNumber(const int32 YourNumber);
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdatePlayerNumberToAllClient();
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdatePlayerNumber(const int32 PlayerNumber);
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdateRemainingTurnToAllClient();
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateRemainingTurn(const int32 RemainingTurn);
 
 protected:
 	virtual void BeginPlay() override;
