@@ -77,11 +77,21 @@ bool AYachtPlayerController::IsTurnRemain()
 	AYachtPlayerState* YachtPlayerState = GetPlayerState<AYachtPlayerState>();
 	if (!ensure(YachtPlayerState != nullptr)) return false;
 
+	UE_LOG(LogTemp, Warning, TEXT("%d"), YachtPlayerState->GetRemainingTurn());
+
 	if (YachtPlayerState->GetRemainingTurn() > 0)
 	{
 		return true;
 	}
 	return false;
+}
+
+void AYachtPlayerController::Server_FinishTurn_Implementation()
+{
+	AYachtPlayerState* YachtPlayerState = GetPlayerState<AYachtPlayerState>();
+	if (!ensure(YachtPlayerState != nullptr)) return;
+
+	YachtPlayerState->FinishTurn();
 }
 
 void AYachtPlayerController::Server_NextTurn_Implementation()
@@ -164,6 +174,54 @@ void AYachtPlayerController::Client_UpdateKeep_Implementation(const TArray<bool>
 	if (!ensure(YachtWidget != nullptr)) return;
 
 	YachtWidget->UpdateKeep(KeepArray);
+}
+
+void AYachtPlayerController::Server_UpdateScoreTableToAllClient_Implementation(const int& OwnerNumber, const TArray<bool>& SelectedArray, const TArray<int32>& ScoreArray)
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
+	if (!ensure(YachtGameState != nullptr)) return;
+
+	for (TObjectPtr<APlayerState> _PlayerState : YachtGameState->PlayerArray)
+	{
+		AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(_PlayerState->GetOwningController());
+		if (!ensure(YachtPlayerController != nullptr)) return;
+
+		YachtPlayerController->Client_UpdateScoreTable(OwnerNumber, SelectedArray, ScoreArray);
+	}
+}
+
+void AYachtPlayerController::Client_UpdateScoreTable_Implementation(const int& OwnerNumber, const TArray<bool>& SelectedArray, const TArray<int32>& ScoreArray)
+{
+	if (!ensure(YachtWidget != nullptr)) return;
+
+	YachtWidget->UpdateScoreTableWidget(OwnerNumber, SelectedArray, ScoreArray);
+}
+
+void AYachtPlayerController::Server_UpdateSpecialScoreToAllClient_Implementation(const int& OwnerNumber, const TArray<int32>& SpecialScoreArray)
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
+	if (!ensure(YachtGameState != nullptr)) return;
+
+	for (TObjectPtr<APlayerState> _PlayerState : YachtGameState->PlayerArray)
+	{
+		AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(_PlayerState->GetOwningController());
+		if (!ensure(YachtPlayerController != nullptr)) return;
+
+		YachtPlayerController->Client_UpdateSpecialScore(OwnerNumber, SpecialScoreArray);
+	}
+}
+
+void AYachtPlayerController::Client_UpdateSpecialScore_Implementation(const int& OwnerNumber, const TArray<int32>& SpecialScoreArray)
+{
+	if (!ensure(YachtWidget != nullptr)) return;
+
+	YachtWidget->UpdateSpecialScore(OwnerNumber, SpecialScoreArray);
 }
 
 void AYachtPlayerController::Server_UpdatePlayerNumberToAllClient_Implementation()

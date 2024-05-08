@@ -26,10 +26,12 @@ void UYachtDiceSlotWidget::Roll(int32 DiceNumber)
 
 void UYachtDiceSlotWidget::KeepValue(int32 DiceNumber)
 {
-	KeepArray[DiceNumber - 1] = !KeepArray[DiceNumber - 1];
-
 	AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(GetOwningPlayer());
 	if (!ensure(YachtPlayerController != nullptr)) return;
+
+	if (!YachtPlayerController->IsPlayerTurn()) return;
+
+	KeepArray[DiceNumber - 1] = !KeepArray[DiceNumber - 1];
 
 	YachtPlayerController->Server_UpdateKeepToAllClient(KeepArray);
 }
@@ -55,23 +57,15 @@ void UYachtDiceSlotWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	ValueArray.Empty();
-
-	ValueArray.Add(1);
-	ValueArray.Add(2);
-	ValueArray.Add(3);
-	ValueArray.Add(4);
-	ValueArray.Add(5);
+	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
+	{
+		ValueArray.Add(DiceNumber);
+	}
 
 	KeepArray.Empty();
-
-	KeepArray.Add(false);
-	KeepArray.Add(false);
-	KeepArray.Add(false);
-	KeepArray.Add(false);
-	KeepArray.Add(false);
+	KeepArray.Init(false, 5);
 
 	TextBlockArray.Empty();
-
 	TextBlockArray.Add(TextBlock_Dice1);
 	TextBlockArray.Add(TextBlock_Dice2);
 	TextBlockArray.Add(TextBlock_Dice3);
@@ -81,7 +75,6 @@ void UYachtDiceSlotWidget::NativeConstruct()
 	InitTextBlockArray();
 
 	ButtonArray.Empty();
-
 	ButtonArray.Add(Button_KeepDice1);
 	ButtonArray.Add(Button_KeepDice2);
 	ButtonArray.Add(Button_KeepDice3);

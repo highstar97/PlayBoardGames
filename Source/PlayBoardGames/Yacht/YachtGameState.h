@@ -19,7 +19,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	int32 GetWhichPlayerTurn() { return bIsPlayer1Turn == true ? 1 : 2; }
+	int32 GetWhichPlayerTurn() { return NumOfPlay % 2 == 1 ? 1 : 2; }
 
 	void ChangePlayerTurn();
 
@@ -27,6 +27,9 @@ public:
 	FOnPlayerChanged OnPlayerChanged;
 
 private:
+	bool IsGameFinish() { if (NumOfPlay == 24) return true; else return false; }
+
+private:
 	UPROPERTY(Replicated)
-	bool bIsPlayer1Turn;
+	int32 NumOfPlay;
 };

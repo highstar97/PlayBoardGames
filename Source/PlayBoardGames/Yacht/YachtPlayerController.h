@@ -25,6 +25,9 @@ public:
 	bool IsTurnRemain();
 
 	UFUNCTION(Server, reliable)
+	void Server_FinishTurn();
+
+	UFUNCTION(Server, reliable)
 	void Server_NextTurn();
 
 	UFUNCTION(Server, reliable)
@@ -38,6 +41,18 @@ public:
 
 	UFUNCTION(Client, reliable)
 	void Client_UpdateKeep(const TArray<bool>& KeepArray);
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdateScoreTableToAllClient(const int& OwnerNumber, const TArray<bool>& SelectedArray, const TArray<int32>& ScoreArray);
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateScoreTable(const int& OwnerNumber, const TArray<bool>& SelectedArray, const TArray<int32>& ScoreArray);
+
+	UFUNCTION(Server, reliable)
+	void Server_UpdateSpecialScoreToAllClient(const int& OwnerNumber, const TArray<int32>& SpecialScoreArray);
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateSpecialScore(const int& OwnerNumber, const TArray<int32>& SpecialScoreArray);
 
 	UFUNCTION(Server, reliable)
 	void Server_UpdateYourNumberToAllClient();

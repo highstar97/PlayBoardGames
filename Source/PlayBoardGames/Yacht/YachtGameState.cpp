@@ -8,19 +8,24 @@ AYachtGameState::AYachtGameState()
 {
 	bReplicates = true;
 
-	bIsPlayer1Turn = true;
+	NumOfPlay = 1;
 }
 
 void AYachtGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AYachtGameState, bIsPlayer1Turn);
+	DOREPLIFETIME(AYachtGameState, NumOfPlay);
 }
 
 void AYachtGameState::ChangePlayerTurn()
 {
-	bIsPlayer1Turn = !bIsPlayer1Turn;
+	++NumOfPlay;
 
 	OnPlayerChanged.Broadcast();
+
+	if (IsGameFinish())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Finish"));
+	}
 }

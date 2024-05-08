@@ -22,6 +22,10 @@ public:
 
 	void UpdateKeep(const TArray<bool>& KeepArray);
 
+	void UpdateScoreTableWidget(const int& OwnerNumber, const TArray<bool>& SelectedArray, const TArray<int32>& ScoreArray);
+
+	void UpdateSpecialScore(const int& OwnerNumber, const TArray<int32>& SpecialScoreArray);
+
 	void UpdateTextBlock_YourNumber(const int32 YourNumber);
 
 	void UpdateTextBlock_PlayerNumber(const int32 PlayerNumber);
@@ -29,8 +33,6 @@ public:
 	void UpdateTextBlock_RemainingTurn(const int32 RemainingTurn);
 
 	void PredictScore();
-
-	void UnPredictScore();
 
 	void InitDiceSlotWidget();
 

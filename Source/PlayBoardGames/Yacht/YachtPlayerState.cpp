@@ -23,17 +23,20 @@ void AYachtPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 void AYachtPlayerState::NextTurn()
 {
 	--RemainingTurn;
-	if (RemainingTurn == 0)
-	{
-		UWorld* World = GetWorld();
-		if (!ensure(World != nullptr)) return;
-
-		AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
-		if (!ensure(YachtGameState != nullptr)) return;
-
-		YachtGameState->ChangePlayerTurn();
-		RemainingTurn = 3;
-	}
 
 	OnRemainingTurnChanged.Broadcast();
+}
+
+void AYachtPlayerState::FinishTurn()
+{
+	RemainingTurn = 3;
+	OnRemainingTurnChanged.Broadcast();
+
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
+	if (!ensure(YachtGameState != nullptr)) return;
+
+	YachtGameState->ChangePlayerTurn();
 }

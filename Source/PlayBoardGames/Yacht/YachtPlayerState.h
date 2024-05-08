@@ -27,6 +27,8 @@ public:
 
 	void NextTurn();
 
+	void FinishTurn();
+
 public:
 	FOnRemainingTurnChanged OnRemainingTurnChanged;
 

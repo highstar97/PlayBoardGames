@@ -14,6 +14,11 @@ void UYachtWidget::Roll()
 {
 	if (!ensure(DiceSlotWidget != nullptr)) return;
 
+	if (!ensure(ScoreTableWidget != nullptr)) return;
+
+	AYachtPlayerState* YachtPlayerState = GetOwningPlayerState<AYachtPlayerState>();
+	if (!ensure(YachtPlayerState != nullptr)) return;
+
 	AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(GetOwningPlayer());
 	if (!ensure(YachtPlayerController != nullptr)) return;
 	
@@ -21,7 +26,8 @@ void UYachtWidget::Roll()
 	
 	if (!YachtPlayerController->IsTurnRemain()) return;
 
-	UnPredictScore();
+	int32 YourNumber = YachtPlayerState->GetPlayerNumber();
+
 	for (int32 i = 1; i <= 5; ++i)
 	{
 		DiceSlotWidget->Roll(i);
@@ -30,17 +36,37 @@ void UYachtWidget::Roll()
 
 	YachtPlayerController->Server_UpdateValueToAllClient(DiceSlotWidget->GetValuerArray());
 
+	YachtPlayerController->Server_UpdateScoreTableToAllClient(YourNumber, ScoreTableWidget->GetSelectedArray(YourNumber), ScoreTableWidget->GetScoreArray(YourNumber));
+
 	YachtPlayerController->Server_NextTurn();
 }
 
 void UYachtWidget::UpdateValue(const TArray<int32>& ValueArray)
 {
+	if (!ensure(DiceSlotWidget != nullptr)) return;
+
 	DiceSlotWidget->UpdateTextBlock_Value(ValueArray);
 }
 
 void UYachtWidget::UpdateKeep(const TArray<bool>& KeepArray)
 {
+	if (!ensure(DiceSlotWidget != nullptr)) return;
+
 	DiceSlotWidget->UpdateTextBlock_Keep(KeepArray);
+}
+
+void UYachtWidget::UpdateScoreTableWidget(const int& OwnerNumber, const TArray<bool>& SelectedArray, const TArray<int32>& ScoreArray)
+{
+	if (!ensure(ScoreTableWidget != nullptr)) return;
+
+	ScoreTableWidget->UpdateScoreTable(OwnerNumber, SelectedArray, ScoreArray);
+}
+
+void UYachtWidget::UpdateSpecialScore(const int& OwnerNumber, const TArray<int32>& SpecialScoreArray)
+{
+	if (!ensure(ScoreTableWidget != nullptr)) return;
+
+	ScoreTableWidget->UpdateSpecialScore(OwnerNumber, SpecialScoreArray);
 }
 
 void UYachtWidget::UpdateTextBlock_YourNumber(const int32 YourNumber)
@@ -73,12 +99,9 @@ void UYachtWidget::UpdateTextBlock_RemainingTurn(const int32 RemainingTurn)
 
 void UYachtWidget::PredictScore()
 {
-	//ScoreTableWidget->PredictScore(DiceSlotWidget->GetDiceMap());
-}
+	if (!ensure(ScoreTableWidget != nullptr)) return;
 
-void UYachtWidget::UnPredictScore()
-{
-	//ScoreTableWidget->UnPredictScore();
+	ScoreTableWidget->PredictScore(DiceSlotWidget->GetValuerArray());
 }
 
 void UYachtWidget::InitDiceSlotWidget()
