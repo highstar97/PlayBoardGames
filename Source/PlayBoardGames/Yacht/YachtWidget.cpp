@@ -1,5 +1,6 @@
 #include "YachtWidget.h"
 
+#include "TimerManager.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
@@ -12,6 +13,8 @@
 
 void UYachtWidget::Roll()
 {
+	if (bCanRoll == false) return;
+
 	if (!ensure(DiceSlotWidget != nullptr)) return;
 
 	if (!ensure(ScoreTableWidget != nullptr)) return;
@@ -39,6 +42,9 @@ void UYachtWidget::Roll()
 	YachtPlayerController->Server_UpdateScoreTableToAllClient(YourNumber, ScoreTableWidget->GetSelectedArray(YourNumber), ScoreTableWidget->GetScoreArray(YourNumber));
 
 	YachtPlayerController->Server_NextTurn();
+
+	bCanRoll = false;
+	YachtPlayerController->GetWorldTimerManager().SetTimer(RollTimerHandle, this, &UYachtWidget::SetbCanRollTrue, 2.0f, false, 2.0f);
 }
 
 void UYachtWidget::UpdateValue(const TArray<int32>& ValueArray)
@@ -113,6 +119,8 @@ void UYachtWidget::InitDiceSlotWidget()
 
 void UYachtWidget::NativeConstruct()
 {
+	bCanRoll = true;
+
 	if (!ensure(Button_Roll != nullptr)) return;
 	Button_Roll->OnClicked.AddDynamic(this, &UYachtWidget::Roll);
 
@@ -123,6 +131,14 @@ void UYachtWidget::NativeConstruct()
 	if (!ensure(YachtGameState != nullptr)) return;
 
 	UpdateTextBlock_PlayerNumber(YachtGameState->GetWhichPlayerTurn());
+}
 
-	// Cast<AYachtPlayerController>(GetOwningPlayer())->Server_UpdateYourNumberToAllClient();
+void UYachtWidget::SetbCanRollTrue()
+{
+	bCanRoll = true;
+	
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	World->GetTimerManager().ClearTimer(RollTimerHandle);
 }

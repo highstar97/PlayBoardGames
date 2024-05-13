@@ -40,6 +40,13 @@ protected:
 	virtual void NativeConstruct() override;
 
 private:
+	void SetbCanRollTrue();
+
+private:
+	bool bCanRoll;
+
+	FTimerHandle RollTimerHandle;
+
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
 	UTextBlock* TextBlock_YourNumber;
 
