@@ -587,7 +587,7 @@ int32 UYachtScoreTableWidget::CalculateSubTotal(int32 OwnerNumber)
 int32 UYachtScoreTableWidget::CalculateBonus(int32 OwnerNumber)
 {
 	int32 Bonus = 35;
-	if (GetSpecialScoreArray(OwnerNumber)[1] >= 63) return Bonus;
+	if (GetSpecialScoreArray(OwnerNumber)[0] >= 63) return Bonus;
 	return 0;
 }
 

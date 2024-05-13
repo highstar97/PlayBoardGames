@@ -21,13 +21,15 @@ public:
 public:
 	int32 GetWhichPlayerTurn() { return NumOfPlay % 2 == 1 ? 1 : 2; }
 
+	void AddNumOfPlay(int32 Number);
+
 	void ChangePlayerTurn();
 
 public:
 	FOnPlayerChanged OnPlayerChanged;
 
 private:
-	bool IsGameFinish() { if (NumOfPlay == 24) return true; else return false; }
+	bool IsGameFinish() { if (NumOfPlay == 26) return true; else return false; }
 
 private:
 	UPROPERTY(Replicated)

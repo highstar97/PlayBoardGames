@@ -77,8 +77,6 @@ bool AYachtPlayerController::IsTurnRemain()
 	AYachtPlayerState* YachtPlayerState = GetPlayerState<AYachtPlayerState>();
 	if (!ensure(YachtPlayerState != nullptr)) return false;
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), YachtPlayerState->GetRemainingTurn());
-
 	if (YachtPlayerState->GetRemainingTurn() > 0)
 	{
 		return true;
@@ -113,6 +111,7 @@ void AYachtPlayerController::Server_UpdateYourNumberToAllClient_Implementation()
 	for (TObjectPtr<APlayerState> _PlayerState : YachtGameState->PlayerArray)
 	{
 		AYachtPlayerState* YachtPlayerState = Cast<AYachtPlayerState>(_PlayerState);
+		if (!ensure(YachtPlayerState != nullptr)) return;
 
 		AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(_PlayerState->GetOwningController());
 		if (!ensure(YachtPlayerController != nullptr)) return;

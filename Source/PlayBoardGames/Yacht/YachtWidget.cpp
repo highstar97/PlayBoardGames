@@ -124,5 +124,5 @@ void UYachtWidget::NativeConstruct()
 
 	UpdateTextBlock_PlayerNumber(YachtGameState->GetWhichPlayerTurn());
 
-	Cast<AYachtPlayerController>(GetOwningPlayer())->Server_UpdateYourNumberToAllClient();
+	// Cast<AYachtPlayerController>(GetOwningPlayer())->Server_UpdateYourNumberToAllClient();
 }

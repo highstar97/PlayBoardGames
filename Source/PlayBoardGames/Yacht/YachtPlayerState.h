@@ -16,6 +16,8 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual void BeginPlay() override;
+
 public:
 	int32 GetPlayerNumber() const { return PlayerNumber; }
 

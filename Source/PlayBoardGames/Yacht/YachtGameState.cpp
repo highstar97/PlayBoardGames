@@ -18,6 +18,11 @@ void AYachtGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AYachtGameState, NumOfPlay);
 }
 
+void AYachtGameState::AddNumOfPlay(int32 Number)
+{
+	NumOfPlay += Number;
+}
+
 void AYachtGameState::ChangePlayerTurn()
 {
 	++NumOfPlay;
