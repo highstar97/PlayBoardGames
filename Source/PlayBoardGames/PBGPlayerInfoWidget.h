@@ -16,13 +16,16 @@ class PLAYBOARDGAMES_API UPBGPlayerInfoWidget : public UUserWidget
 
 public:
 	UFUNCTION()
-	void OnClicked();
-
-	UFUNCTION()
 	void OnTextCommitted(const FText& _Text, ETextCommit::Type _CommitMethod);
 
 protected:
 	virtual bool Initialize() override;
+
+private:
+	UFUNCTION()
+	void TurnOnEditableTextBox();
+
+	void TurnOffEditableTextBox();
 
 private:
 	UPROPERTY(meta = (BindWidget))

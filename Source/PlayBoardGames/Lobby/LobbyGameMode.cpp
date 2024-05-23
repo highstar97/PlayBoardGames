@@ -25,7 +25,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	if (NumberOfPlayers == 2)
 	{
 		//SetStartGame(true);
-		GetWorldTimerManager().SetTimer(GameStartTimer, this, &ALobbyGameMode::StartGame, 5, false);
+		//GetWorldTimerManager().SetTimer(GameStartTimer, this, &ALobbyGameMode::StartGame, 5, false);
 	}
 }
 
@@ -67,5 +67,5 @@ void ALobbyGameMode::StartGame()
 	if (!ensure(World != nullptr)) return;
 
 	bUseSeamlessTravel = true;
-	World->ServerTravel("/Game/Maps/Yacht");
+	World->ServerTravel("/Game/Maps/Yacht", true);
 }

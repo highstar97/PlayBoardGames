@@ -32,6 +32,7 @@ public:
 
 	virtual void Init() override;
 
+public:
 	void Host();
 
 	void Join(uint32 Index);
@@ -43,6 +44,10 @@ public:
 	void SetDesiredServerName(FString _DesiredServerName) { DesiredServerName = _DesiredServerName; }
 	
 	TArray<FPBGGame> GetPBGGames() { return PBGGames; }
+
+	void SavePlayerStateData();
+
+	TPair<bool, FString> LoadPlayerStateData();
 
 private:
 	void OnCreateSessionComplete(FName SessionName, bool Success);
@@ -58,6 +63,8 @@ private:
 	void CreateSession();
 
 private:
+	TPair<bool, FString> PlayerStateData;
+
 	IOnlineSessionPtr SessionInterface;
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;

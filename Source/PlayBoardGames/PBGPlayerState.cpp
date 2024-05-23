@@ -1,6 +1,8 @@
 #include "PBGPlayerState.h"
 
 #include "Net/UnrealNetwork.h"
+
+#include "PBGGameInstance.h"
 #include "PBGGameState.h"
 
 APBGPlayerState::APBGPlayerState()

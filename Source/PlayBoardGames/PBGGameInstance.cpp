@@ -2,9 +2,10 @@
 
 #include "OnlineSessionSettings.h"
 
-#include "PBGMainMenuWidget.h"
-#include "PBGPlayerController.h"
 #include "PBGGameState.h"
+#include "PBGPlayerState.h"
+#include "PBGPlayerController.h"
+#include "PBGMainMenuWidget.h"
 
 const static FName SERVER_NAME_SETTING_KEY = TEXT("Server Name");
 
@@ -92,6 +93,22 @@ void UPBGGameInstance::StartSession()
 	}
 }
 
+void UPBGGameInstance::SavePlayerStateData()
+{
+	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
+	if (!ensure(PBGPlayerController != nullptr)) return;
+
+	APBGPlayerState* PBGPlayerState = PBGPlayerController->GetPlayerState<APBGPlayerState>();
+	if (!ensure(PBGPlayerState != nullptr)) return;
+
+	PlayerStateData = { PBGPlayerState->GetbIsHost() ,PBGPlayerState->GetUserName() };
+}
+
+TPair<bool, FString> UPBGGameInstance::LoadPlayerStateData()
+{
+	return PlayerStateData;
+}
+
 void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
 	if (!Success)
@@ -100,13 +117,17 @@ void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 		return;
 	}
 
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
 	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
 	if (!ensure(PBGPlayerController != nullptr)) return;
 
+	PBGPlayerController->Server_SetbIsHost(true);
+
 	PBGPlayerController->TurnOffMainMenu();
 
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
+	SavePlayerStateData();
 
 	World->ServerTravel("/Game/Maps/Lobby?listen");
 }
@@ -168,6 +189,8 @@ void UPBGGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController != nullptr)) return;
+
+	SavePlayerStateData();
 
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }

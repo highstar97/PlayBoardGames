@@ -1,13 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerState.h"
+#include "../PBGPlayerState.h"
 #include "YachtPlayerState.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnRemainingTurnChanged);
 
 UCLASS()
-class PLAYBOARDGAMES_API AYachtPlayerState : public APlayerState
+class PLAYBOARDGAMES_API AYachtPlayerState : public APBGPlayerState
 {
 	GENERATED_BODY()
 

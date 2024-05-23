@@ -18,14 +18,13 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+public:
 	bool GetbIsHost() const { return bIsHost; }
 
 	void SetbIsHost(bool _bIsHost) { bIsHost = _bIsHost; }
 
-	UFUNCTION(BlueprintCallable)
 	FString GetUserName() const { return UserName; }
 
-	UFUNCTION(BlueprintCallable)
 	void SetUserName(const FString& _UserName) { UserName = _UserName; }
 
 private:

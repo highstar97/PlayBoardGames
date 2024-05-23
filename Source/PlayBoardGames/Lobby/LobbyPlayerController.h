@@ -20,15 +20,45 @@ public:
 	UFUNCTION(Client, unreliable)
 	void Client_TurnOffLobbyWidget();
 
-	void UpdatePlayerList();
+	void TurnOnTransitionWidget();
 
+	void TurnOffTransitionWidget();
+
+	UFUNCTION(Server, unreliable)
+	void Server_UpdatePlayerState(const bool _bIsHost, const FString& _UserName);
+
+	UFUNCTION(Client , unreliable)
+	void Client_UpdatePlayerState();
+
+	UFUNCTION(Server, unreliable)
+	void Server_UpdatePlayerListToAllClient();
+
+	UFUNCTION(Client, unreliable)
+	void Client_UpdatePlayerList(const TArray<APBGPlayerState*>& ConnectedPlayerStates);
+	
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	bool bIsLobbyWidgetTurnOn;
+	
 	UPROPERTY()
 	TSubclassOf<UUserWidget> LobbyWidgetClass;
 
 	UPROPERTY()
 	ULobbyWidget* LobbyWidget;
+
+	bool bIsTransitionWidgetTurnOn;
+
+	UPROPERTY()
+	TSubclassOf<UUserWidget> TransitionWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* TransitionWidget;
+
+	FTimerHandle UpdatePlyaerListTimer;
+
+	bool bIsHost;
+
+	FString UserName;
 };
