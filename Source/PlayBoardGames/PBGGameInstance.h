@@ -43,6 +43,8 @@ public:
 
 	void SetDesiredServerName(FString _DesiredServerName) { DesiredServerName = _DesiredServerName; }
 	
+	FString GetDesiredServerName() { return DesiredServerName; }
+
 	TArray<FPBGGame> GetPBGGames() { return PBGGames; }
 
 	void SavePlayerStateData();

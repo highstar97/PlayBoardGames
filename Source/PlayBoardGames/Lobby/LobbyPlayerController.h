@@ -36,6 +36,8 @@ public:
 	UFUNCTION(Client, unreliable)
 	void Client_UpdatePlayerList(const TArray<APBGPlayerState*>& ConnectedPlayerStates);
 	
+	void LoadToMainMenuLevel();
+
 protected:
 	virtual void BeginPlay() override;
 

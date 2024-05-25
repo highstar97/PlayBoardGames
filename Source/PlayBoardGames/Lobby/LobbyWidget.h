@@ -22,6 +22,15 @@ public:
 
 	void KickOut(ULobbyPlayerRowWidget* PlayerRow);
 
+protected:
+	virtual bool Initialize() override;
+
+	virtual void NativeConstruct() override;
+
+private:
+	UFUNCTION()
+	void ExitGame();
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TextBlock_GameName;

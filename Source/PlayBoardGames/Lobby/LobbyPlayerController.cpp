@@ -160,6 +160,11 @@ void ALobbyPlayerController::Client_UpdatePlayerList_Implementation(const TArray
 	LobbyWidget->UpdatePlayerList(ConnectedPlayerStates);
 }
 
+void ALobbyPlayerController::LoadToMainMenuLevel()
+{
+	ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
+}
+
 void ALobbyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -178,6 +183,6 @@ void ALobbyPlayerController::BeginPlay()
 
 		Client_UpdatePlayerState();
 
-		GetWorldTimerManager().SetTimer(UpdatePlyaerListTimer, this, &ALobbyPlayerController::Server_UpdatePlayerListToAllClient, 1, false);
+		GetWorldTimerManager().SetTimer(UpdatePlyaerListTimer, this, &ALobbyPlayerController::Server_UpdatePlayerListToAllClient, 1.5f, false);
 	}
 }

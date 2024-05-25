@@ -38,6 +38,18 @@ bool UPBGPlayerInfoWidget::Initialize()
 	return true;
 }
 
+void UPBGPlayerInfoWidget::NativeConstruct()
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	UPBGGameInstance* PBGGameInstacne = Cast<UPBGGameInstance>(World->GetGameInstance());
+	if (!ensure(PBGGameInstacne != nullptr)) return;
+
+	if (!ensure(TextBlock_UserName != nullptr)) return;
+	TextBlock_UserName->SetText(FText::FromString(PBGGameInstacne->LoadPlayerStateData().Value));
+}
+
 void UPBGPlayerInfoWidget::TurnOnEditableTextBox()
 {
 	if (!ensure(NameSwitcher != nullptr)) return;

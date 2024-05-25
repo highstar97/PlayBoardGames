@@ -11,6 +11,7 @@ const static FName SERVER_NAME_SETTING_KEY = TEXT("Server Name");
 
 UPBGGameInstance::UPBGGameInstance()
 {
+	PlayerStateData = { false, "Player" };
 	// TODO : Make it more simply.
 	PBGGames.Empty();
 	FPBGGame Null;

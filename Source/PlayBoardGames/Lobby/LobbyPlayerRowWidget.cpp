@@ -3,6 +3,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 
+#include "../PBGPlayerState.h"
 #include "LobbyWidget.h"
 
 void ULobbyPlayerRowWidget::Setup(ULobbyWidget* _Parent, bool _bIsHost)
@@ -16,8 +17,12 @@ void ULobbyPlayerRowWidget::Setup(ULobbyWidget* _Parent, bool _bIsHost)
 	}
 	else
 	{
-		Button_Kick->SetVisibility(ESlateVisibility::Visible);
-		Button_Kick->OnClicked.AddDynamic(this, &ULobbyPlayerRowWidget::OnClicked);
+		APBGPlayerState* PBGPlayerState = GetOwningPlayerState<APBGPlayerState>();
+		if (PBGPlayerState->GetbIsHost() == true)
+		{
+			Button_Kick->SetVisibility(ESlateVisibility::Visible);
+			Button_Kick->OnClicked.AddDynamic(this, &ULobbyPlayerRowWidget::OnClicked);
+		}
 	}
 }
 

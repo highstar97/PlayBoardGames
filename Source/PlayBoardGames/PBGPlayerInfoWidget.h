@@ -21,6 +21,8 @@ public:
 protected:
 	virtual bool Initialize() override;
 
+	virtual void NativeConstruct() override;
+
 private:
 	UFUNCTION()
 	void TurnOnEditableTextBox();
