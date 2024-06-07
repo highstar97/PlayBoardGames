@@ -16,4 +16,7 @@ public:
 	AYachtGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer);
+
+public:
+	void EndGame();
 };

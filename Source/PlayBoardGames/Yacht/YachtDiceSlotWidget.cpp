@@ -3,52 +3,46 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
+#include "YachtGameState.h"
 #include "YachtPlayerController.h"
 
-void UYachtDiceSlotWidget::InitDiceSlot()
+UYachtDiceSlotWidget::UYachtDiceSlotWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	InitNumberArray();
-	InitKeepArray();
-	InitTextBlockArray();
+	TextBlockArray.Empty();
+	ButtonArray.Empty();
 }
 
-void UYachtDiceSlotWidget::Roll(int32 DiceNumber)
+void UYachtDiceSlotWidget::UpdateKeepWidget()
 {
-	if (KeepArray[DiceNumber - 1] == true)
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
+	if (!ensure(YachtGameState != nullptr)) return;
+
+	TArray<bool> KeepArray = YachtGameState->GetKeepArray();
+	for (int32 i = 0; i < KeepArray.Num(); ++i)
 	{
-		return;
-	}
+		if (!ensure(TextBlockArray[i] != nullptr)) return;
 
-	int32 NewValue = FMath::RandRange(1, 6);
-
-	ValueArray[DiceNumber - 1] = NewValue;
-}
-
-void UYachtDiceSlotWidget::KeepValue(int32 DiceNumber)
-{
-	AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(GetOwningPlayer());
-	if (!ensure(YachtPlayerController != nullptr)) return;
-
-	if (!YachtPlayerController->IsPlayerTurn()) return;
-
-	KeepArray[DiceNumber - 1] = !KeepArray[DiceNumber - 1];
-
-	YachtPlayerController->Server_UpdateKeepToAllClient(KeepArray);
-}
-
-void UYachtDiceSlotWidget::UpdateTextBlock_Value(const TArray<int32>& _ValueArray)
-{
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
-	{
-		TextBlockArray[DiceNumber - 1]->SetText(FText::FromString(FString::FromInt(_ValueArray[DiceNumber - 1])));
+		KeepArray[i] == true ? TextBlockArray[i]->SetColorAndOpacity(Color_Keeping) : TextBlockArray[i]->SetColorAndOpacity(Color_UnKeeping);
 	}
 }
 
-void UYachtDiceSlotWidget::UpdateTextBlock_Keep(const TArray<bool>& _KeepArray)
-{	
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
+void UYachtDiceSlotWidget::UpdateDiceWidget()
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
+	if (!ensure(YachtGameState != nullptr)) return;
+
+	TArray<int32> DiceArray = YachtGameState->GetDiceArray();
+	for (int32 i = 0; i < DiceArray.Num(); ++i)
 	{
-		TextBlockArray[DiceNumber - 1]->SetColorAndOpacity(_KeepArray[DiceNumber - 1] ? Keeping : UnKeeping);
+		if (!ensure(TextBlockArray[i] != nullptr)) return;
+
+		TextBlockArray[i]->SetText(FText::FromString(FString::FromInt(DiceArray[i])));
 	}
 }
 
@@ -56,65 +50,35 @@ void UYachtDiceSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ValueArray.Empty();
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
-	{
-		ValueArray.Add(DiceNumber);
-	}
-
-	KeepArray.Empty();
-	KeepArray.Init(false, 5);
-
-	TextBlockArray.Empty();
 	TextBlockArray.Add(TextBlock_Dice1);
 	TextBlockArray.Add(TextBlock_Dice2);
 	TextBlockArray.Add(TextBlock_Dice3);
 	TextBlockArray.Add(TextBlock_Dice4);
 	TextBlockArray.Add(TextBlock_Dice5);
 
-	InitTextBlockArray();
-
-	ButtonArray.Empty();
 	ButtonArray.Add(Button_KeepDice1);
 	ButtonArray.Add(Button_KeepDice2);
 	ButtonArray.Add(Button_KeepDice3);
 	ButtonArray.Add(Button_KeepDice4);
 	ButtonArray.Add(Button_KeepDice5);
 
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
+	for (int32 i = 0; i < ButtonArray.Num(); ++i)
 	{
-		if (!ensure(ButtonArray[DiceNumber - 1] != nullptr)) return;
+		if (!ensure(ButtonArray[i] != nullptr)) return;
 
-		SButton* SlateButton = (SButton*)&(ButtonArray[DiceNumber - 1]->TakeWidget().Get());
-		SlateButton->SetOnClicked(FOnClicked::CreateLambda([this, DiceNumber]()
+		SButton* SlateButton = (SButton*)&(ButtonArray[i]->TakeWidget().Get());
+		SlateButton->SetOnClicked(FOnClicked::CreateLambda([this, i]()
 			{
-				KeepValue(DiceNumber);
+				OnClicked(i);
 				return FReply::Handled();
 			}));
 	}
 }
 
-void UYachtDiceSlotWidget::InitNumberArray()
+void UYachtDiceSlotWidget::OnClicked(int32 Index)
 {
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
-	{
-		ValueArray[DiceNumber - 1] = DiceNumber;
-	}
-}
+	AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(GetOwningPlayer());
+	if (!ensure(YachtPlayerController != nullptr)) return;
 
-void UYachtDiceSlotWidget::InitKeepArray()
-{
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
-	{
-		KeepArray[DiceNumber - 1] = false;
-		TextBlockArray[DiceNumber - 1]->SetColorAndOpacity(UnKeeping);
-	}
-}
-
-void UYachtDiceSlotWidget::InitTextBlockArray()
-{
-	for (int32 DiceNumber = 1; DiceNumber <= 5; ++DiceNumber)
-	{
-		TextBlockArray[DiceNumber - 1]->SetText(FText::FromString(FString::FromInt(DiceNumber)));
-	}
+	YachtPlayerController->Server_ToggleKeep(Index);
 }

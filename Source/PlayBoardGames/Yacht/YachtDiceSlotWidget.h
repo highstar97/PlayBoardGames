@@ -11,76 +11,60 @@ UCLASS()
 class PLAYBOARDGAMES_API UYachtDiceSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
+		
+public:
+	UYachtDiceSlotWidget(const FObjectInitializer &ObjectInitializer);
 
 public:
-	TArray<int32> GetValuerArray() { return ValueArray; }
+	void UpdateKeepWidget();
 
-	TArray<bool> GetKeepArray() { return KeepArray; }
-
-	void InitDiceSlot();
-
-	void Roll(int32 DiceNumber);
-
-	void KeepValue(int32 DiceNumber);
-
-	void UpdateTextBlock_Value(const TArray<int32>& _ValueArray);
-
-	void UpdateTextBlock_Keep(const TArray<bool>& _KeepArray);
+	void UpdateDiceWidget();
 
 protected:
 	virtual void NativeConstruct() override;
 
 private:
-	void InitNumberArray();
-
-	void InitKeepArray();
-
-	void InitTextBlockArray();
+	void OnClicked(int32 Index);
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Dice", meta = (AllowPrivateAccess = true))
-	TArray<int32> ValueArray;
+	FSlateColor Color_Keeping = FSlateColor(FColor::Red);
 
-	UPROPERTY(VisibleAnywhere, Category = "Dice", meta = (AllowPrivateAccess = true))
-	TArray<bool> KeepArray;
-
-	UPROPERTY(VisibleAnywhere, Category = "Dice", meta = (AllowPrivateAccess = true))
+	FSlateColor Color_UnKeeping = FSlateColor(FColor::White);
+	
+	UPROPERTY(VisibleAnywhere, Category = "Text")
 	TArray<UTextBlock*> TextBlockArray;
 
-	UPROPERTY(VisibleAnywhere, Category = "Dice", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Button")
 	TArray<UButton*> ButtonArray;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Text", meta = (BindWidget))
 	UTextBlock* TextBlock_Dice1;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Text", meta = (BindWidget))
 	UTextBlock* TextBlock_Dice2;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Text", meta = (BindWidget))
 	UTextBlock* TextBlock_Dice3;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Text", meta = (BindWidget))
 	UTextBlock* TextBlock_Dice4;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Text", meta = (BindWidget))
 	UTextBlock* TextBlock_Dice5;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Button", meta = (BindWidget))
 	UButton* Button_KeepDice1;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Button", meta = (BindWidget))
 	UButton* Button_KeepDice2;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Button", meta = (BindWidget))
 	UButton* Button_KeepDice3;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Button", meta = (BindWidget))
 	UButton* Button_KeepDice4;
 
-	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, Category = "Button", meta = (BindWidget))
 	UButton* Button_KeepDice5;
-
-	FSlateColor Keeping = FSlateColor(FColor::Red);
-
-	FSlateColor UnKeeping = FSlateColor(FColor::White);
 };

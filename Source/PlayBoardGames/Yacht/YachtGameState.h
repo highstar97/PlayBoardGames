@@ -4,9 +4,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "YachtGameState.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnPlayerChanged);
-
-class AYachtPlayerController;
+class UYachtPredictScoreComponent;
 
 UCLASS()
 class PLAYBOARDGAMES_API AYachtGameState : public AGameStateBase
@@ -19,19 +17,65 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	int32 GetWhichPlayerTurn() { return NumOfPlay % 2 == 1 ? 1 : 2; }
+	bool GetbIsPredicting() const { return bIsPredicting; }
+	void SetbIsPredicting(const bool _bIsPredicting) { bIsPredicting = _bIsPredicting; }
 
-	void AddNumOfPlay(int32 Number);
+	int32 GetWhichPlayerTurn() { if (bIsPlayer1Turn) return 1; else return 2; }
+	
+	int32 GetRemainingTurn() const { return RemainingTurn; }
+	void SetRemainingTurn(const int32 NewRemaingTurn) { RemainingTurn = NewRemaingTurn; }
 
-	void ChangePlayerTurn();
+	TArray<bool> GetKeepArray() const { return KeepArray; }
+
+	TArray<int32> GetDiceArray() const { return DiceArray; }
+
+	TArray<int32> GetPredictArray() const { return PredictArray; }
 
 public:
-	FOnPlayerChanged OnPlayerChanged;
+	void InitArray();
 
-private:
-	bool IsGameFinish() { if (NumOfPlay == 26) return true; else return false; }
+	void InitKeepArray();
+
+	void InitDiceArray();
+
+	void ToggleKeep(int32 Index);
+
+	void Roll();
+
+	void PredictScore();
+
+	void NextTurn();
+
+	void FinishTurn();
 
 private:
 	UPROPERTY(Replicated)
-	int32 NumOfPlay;
+	bool bIsPlayer1Turn;
+
+	UPROPERTY(Replicated)
+	bool bIsPredicting;
+
+	UPROPERTY(Replicated)
+	int32 CurrentRound;
+
+	UPROPERTY()
+	int32 TotalRound;
+
+	UPROPERTY(Replicated)
+	int32 RemainingTurn;
+
+	UPROPERTY()
+	int32 MaxTurn;
+
+	UPROPERTY(Replicated)
+	TArray<bool> KeepArray;
+
+	UPROPERTY(Replicated)
+	TArray<int32> DiceArray;
+
+	UPROPERTY(Replicated)
+	TArray<int32> PredictArray;
+
+	UPROPERTY(EditDefaultsOnly)
+	UYachtPredictScoreComponent* PredictScoreComponent;
 };
