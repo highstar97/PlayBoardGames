@@ -44,9 +44,6 @@ void AYachtPlayerController::Server_ToggleKeep_Implementation(const int32 Index)
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
-	AYachtGameMode* YachtGameMode = Cast<AYachtGameMode>(World->GetAuthGameMode());
-	if (!ensure(YachtGameMode != nullptr)) return;
-
 	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
 	if (!ensure(YachtGameState != nullptr)) return;
 
@@ -58,6 +55,8 @@ void AYachtPlayerController::Server_ToggleKeep_Implementation(const int32 Index)
 
 	// Keep Dice
 	YachtGameState->ToggleKeep(Index);
+
+	YachtGameState->ForceNetUpdate();
 }
 
 void AYachtPlayerController::Server_Roll_Implementation()
@@ -86,6 +85,9 @@ void AYachtPlayerController::Server_Roll_Implementation()
 
 	// Next Turn;
 	YachtGameState->NextTurn();
+
+	YachtGameState->ForceNetUpdate();
+	YachtPlayerState->ForceNetRelevant();
 }
 
 void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNumber, const int32 Index)
@@ -108,6 +110,9 @@ void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNu
 	// Check PlayerState's FixedArray[Index]
 	if (YachtPlayerState->GetFixedArray()[Index] == true) return;
 
+	// Need to Roll at least once
+	if (YachtGameState->GetRemainingTurn() == YachtGameState->GetMaxTurn()) return;
+
 	// Set Fixed Array true
 	YachtPlayerState->SetFixedArray(true, Index);
 
@@ -125,6 +130,9 @@ void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNu
 
 	// Call GameState's FinishTurn()
 	YachtGameState->FinishTurn();
+
+	YachtGameState->ForceNetUpdate();
+	YachtPlayerState->ForceNetRelevant();
 }
 
 void AYachtPlayerController::BeginPlay()

@@ -25,6 +25,8 @@ public:
 	int32 GetRemainingTurn() const { return RemainingTurn; }
 	void SetRemainingTurn(const int32 NewRemaingTurn) { RemainingTurn = NewRemaingTurn; }
 
+	int32 GetMaxTurn() const { return MaxTurn; }
+
 	TArray<bool> GetKeepArray() const { return KeepArray; }
 
 	TArray<int32> GetDiceArray() const { return DiceArray; }

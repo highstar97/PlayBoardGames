@@ -7,6 +7,7 @@
 AYachtPlayerState::AYachtPlayerState()
 {
 	bReplicates = true;
+	NetUpdateFrequency = 1.0f;
 
 	PlayerNumber = 0;
 	FixedArray.Init(false, 12);

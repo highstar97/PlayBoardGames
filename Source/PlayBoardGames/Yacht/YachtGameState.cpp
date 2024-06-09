@@ -8,6 +8,7 @@
 AYachtGameState::AYachtGameState()
 {
 	bReplicates = true;
+	NetUpdateFrequency = 1.0f;
 
 	bIsPlayer1Turn = true;
 	bIsPredicting = false;
