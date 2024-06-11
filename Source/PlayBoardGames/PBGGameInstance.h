@@ -45,7 +45,7 @@ public:
 	TArray<FPBGGame> GetPBGGames() { return PBGGames; }
 
 public:
-	void SaveGameData();
+	void SaveGameData(const FString& InputID);
 
 	void LoadGameData(const FString& InputID);
 

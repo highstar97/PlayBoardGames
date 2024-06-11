@@ -49,27 +49,35 @@ void UPBGGameInstance::Init()
 	GetEngine()->OnNetworkFailure().AddUObject(this, &UPBGGameInstance::OnNetworkFailure);
 }
 
-void UPBGGameInstance::SaveGameData()
+void UPBGGameInstance::SaveGameData(const FString& InputID)
 {
-	if (PBGSaveGame == nullptr)
+	if (UGameplayStatics::DoesSaveGameExist(InputID, 0))
 	{
-		PBGSaveGame = NewObject<UPBGSaveGame>();
+		PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
+		UGameplayStatics::SaveGameToSlot(PBGSaveGame, PBGSaveGame->SaveSlotName, PBGSaveGame->UserIndex);
 	}
-
-	if (!UGameplayStatics::SaveGameToSlot(PBGSaveGame, PBGSaveGame->SaveSlotName, PBGSaveGame->UserIndex))
+	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("SaveGame Error"));
+		PBGSaveGame = GetMutableDefault<UPBGSaveGame>();
+		PBGSaveGame->SaveSlotName = InputID;
+		PBGSaveGame->UserIndex = 0;
+		PBGSaveGame->ID = InputID;
+		UGameplayStatics::SaveGameToSlot(PBGSaveGame, PBGSaveGame->SaveSlotName, PBGSaveGame->UserIndex);
 	}
 }
 
 void UPBGGameInstance::LoadGameData(const FString& InputID)
 {
-	PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
-	if (PBGSaveGame == nullptr)
+	if (UGameplayStatics::DoesSaveGameExist(InputID, 0))
 	{
-		PBGSaveGame = GetMutableDefault<UPBGSaveGame>();
+		PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
+		UE_LOG(LogTemp, Warning, TEXT("SaveGameExist"));
 	}
-	PBGSaveGame->ID = InputID;
+	else
+	{
+		SaveGameData(InputID);
+		UE_LOG(LogTemp, Warning, TEXT("No SaveGameExist"));
+	}
 }
 
 void UPBGGameInstance::Host()
