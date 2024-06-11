@@ -87,7 +87,7 @@ void AYachtPlayerController::Server_Roll_Implementation()
 	YachtGameState->NextTurn();
 
 	YachtGameState->ForceNetUpdate();
-	YachtPlayerState->ForceNetRelevant();
+	YachtPlayerState->ForceNetUpdate();
 }
 
 void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNumber, const int32 Index)
@@ -107,11 +107,11 @@ void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNu
 	// Check CurrentPlayerTurn != Button's OwnerPlayerNumber
 	if (YachtGameState->GetWhichPlayerTurn() != PlayerNumber) return;
 
-	// Check PlayerState's FixedArray[Index]
-	if (YachtPlayerState->GetFixedArray()[Index] == true) return;
-
 	// Need to Roll at least once
 	if (YachtGameState->GetRemainingTurn() == YachtGameState->GetMaxTurn()) return;
+
+	// Check PlayerState's FixedArray[Index]
+	if (YachtPlayerState->GetFixedArray()[Index] == true) return;
 
 	// Set Fixed Array true
 	YachtPlayerState->SetFixedArray(true, Index);
@@ -132,7 +132,7 @@ void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNu
 	YachtGameState->FinishTurn();
 
 	YachtGameState->ForceNetUpdate();
-	YachtPlayerState->ForceNetRelevant();
+	YachtPlayerState->ForceNetUpdate();
 }
 
 void AYachtPlayerController::BeginPlay()

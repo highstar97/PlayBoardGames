@@ -52,6 +52,7 @@ public:
 	TPair<bool, FString> LoadPlayerStateData();
 
 private:
+	// Session
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 
 	void OnDestroySessionComplete(FName SessionName, bool Success);

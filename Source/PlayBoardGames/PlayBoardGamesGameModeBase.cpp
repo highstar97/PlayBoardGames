@@ -1,8 +1,8 @@
 #include "PlayBoardGamesGameModeBase.h"
 
-#include "PBGPlayerController.h"
-#include "PBGPlayerState.h"
 #include "PBGGameState.h"
+#include "PBGPlayerState.h"
+#include "PBGPlayerController.h"
 
 APlayBoardGamesGameModeBase::APlayBoardGamesGameModeBase()
 {

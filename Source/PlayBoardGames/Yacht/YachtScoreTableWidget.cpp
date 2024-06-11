@@ -64,52 +64,6 @@ void UYachtScoreTableWidget::UpdateScoreWidget()
 			TextBlockArray[i]->SetText(FText::FromString(FString::FromInt(ScoreArray[i])));
 		}
 	}
-
-	/*
-	AYachtPlayerState* YachtPlayerState = GetOwningPlayerState<AYachtPlayerState>();
-	if (!ensure(YachtPlayerState != nullptr)) return;
-
-	bool bIsPredicting = YachtGameState->GetbIsPredicting();
-
-	int32 CurrentTurnPlayerNumber = YachtGameState->GetWhichPlayerTurn();
-
-	const TArray<int32> PredictArray = YachtGameState->GetPredictArray();
-
-	const TArray<bool> FixedArray = YachtPlayerState->GetFixedArray();
-
-	const TArray<int32> ScoreArray = YachtPlayerState->GetScoreArray();
-
-	for (int32 PlayerNumber = 1; PlayerNumber <= 2; ++PlayerNumber)
-	{
-		const TArray<UTextBlock*>& TextBlockArray = PlayerNumber == 1 ? TextBlock1PArray : TextBlock2PArray;
-
-		for (int32 i = 0; i < 12; ++i)
-		{
-			if (FixedArray[i] == true)
-			{
-				TextBlockArray[i]->SetText(FText::FromString(FString::FromInt(ScoreArray[i])));
-				TextBlockArray[i]->SetColorAndOpacity(ColorFixed);
-			}
-			else if (PlayerNumber == CurrentTurnPlayerNumber)
-			{
-				FText InputText = bIsPredicting ? FText::FromString(FString::FromInt(PredictArray[i])) : FText::GetEmpty();
-				TextBlockArray[i]->SetText(InputText);
-			}
-		}
-
-		if (PlayerNumber == CurrentTurnPlayerNumber)
-		{
-			TextBlockArray[12]->SetText(FText::FromString(FString::FromInt(ScoreArray[12]) + TEXT("/63")));
-			// TextBlockArray[12]->SetColorAndOpacity(ColorFixed);
-
-			for (int32 i = 13; i < 15; ++i)
-			{
-				TextBlockArray[i]->SetText(FText::FromString(FString::FromInt(ScoreArray[i])));
-				// TextBlockArray[i]->SetColorAndOpacity(ColorFixed);
-			}
-		}
-	}
-	*/
 }
 
 void UYachtScoreTableWidget::NativeConstruct()
