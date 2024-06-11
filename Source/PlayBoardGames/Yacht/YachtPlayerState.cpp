@@ -34,7 +34,7 @@ void AYachtPlayerState::BeginPlay()
 	if (!ensure(PBGGameInstance != nullptr)) return;
 
 	// Is Player Host?
-	PBGGameInstance->LoadPlayerStateData().Key == true ? Server_UpdatePlayerNumber(1) : Server_UpdatePlayerNumber(2);
+	PBGGameInstance->GetbIsHost() == true ? Server_UpdatePlayerNumber(1) : Server_UpdatePlayerNumber(2);
 }
 
 void AYachtPlayerState::UpdateSpecialScore()

@@ -5,6 +5,7 @@
 #include "MainMenuInterface.h"
 #include "PBGMainMenuWidget.generated.h"
 
+class UPBGPlayerInfoWidget;
 class UWidgetSwitcher;
 class UWidget;
 class UButton;
@@ -35,11 +36,17 @@ class PLAYBOARDGAMES_API UPBGMainMenuWidget : public UUserWidget
 public:
 	UPBGMainMenuWidget(const FObjectInitializer& Objectinitializer);
 
+public:
 	void SetMainMenuInterface(IMainMenuInterface* _MainMenuInterface) { this->MainMenuInterface = _MainMenuInterface; }
 
+	void SetbIsPlayerLogin(bool _bIsPlayerLogin) { bIsPlayerLogIn = _bIsPlayerLogin; }
+
+public:
 	void SetUp();
 
 	void TearDown();
+
+	void UpdatePlayerInfo(FString InputID);
 
 	void UpdateServerList(TArray<FServerData> ServerDatas);
 
@@ -72,6 +79,16 @@ private:
 	void UpdateChildren();
 
 private:
+// LogIn
+	bool bIsPlayerLogIn;
+
+	TSubclassOf<UUserWidget> LoginWidgetClass;
+
+// PlayerInfo
+	UPROPERTY(meta = (BindWidget))
+	UPBGPlayerInfoWidget* PlayerInfoWidget;
+
+// MainMenu
 	IMainMenuInterface* MainMenuInterface;
 
 	UPROPERTY(meta = (BindWidget))

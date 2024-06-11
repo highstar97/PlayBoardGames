@@ -1,7 +1,9 @@
 #include "PBGGameInstance.h"
 
 #include "OnlineSessionSettings.h"
+#include "Kismet/GameplayStatics.h"
 
+#include "PBGSaveGame.h"
 #include "PBGGameState.h"
 #include "PBGPlayerState.h"
 #include "PBGPlayerController.h"
@@ -11,7 +13,7 @@ const static FName SERVER_NAME_SETTING_KEY = TEXT("Server Name");
 
 UPBGGameInstance::UPBGGameInstance()
 {
-	PlayerStateData = { false, "Player" };
+	bIsHost = false;
 	// TODO : Make it more simply.
 	PBGGames.Empty();
 	FPBGGame Null;
@@ -45,6 +47,29 @@ void UPBGGameInstance::Init()
 
 	if (!ensure(GetEngine() != nullptr)) return;
 	GetEngine()->OnNetworkFailure().AddUObject(this, &UPBGGameInstance::OnNetworkFailure);
+}
+
+void UPBGGameInstance::SaveGameData()
+{
+	if (PBGSaveGame == nullptr)
+	{
+		PBGSaveGame = NewObject<UPBGSaveGame>();
+	}
+
+	if (!UGameplayStatics::SaveGameToSlot(PBGSaveGame, PBGSaveGame->SaveSlotName, PBGSaveGame->UserIndex))
+	{
+		UE_LOG(LogTemp, Error, TEXT("SaveGame Error"));
+	}
+}
+
+void UPBGGameInstance::LoadGameData(const FString& InputID)
+{
+	PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
+	if (PBGSaveGame == nullptr)
+	{
+		PBGSaveGame = GetMutableDefault<UPBGSaveGame>();
+	}
+	PBGSaveGame->ID = InputID;
 }
 
 void UPBGGameInstance::Host()
@@ -94,22 +119,6 @@ void UPBGGameInstance::StartSession()
 	}
 }
 
-void UPBGGameInstance::SavePlayerStateData()
-{
-	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
-	if (!ensure(PBGPlayerController != nullptr)) return;
-
-	APBGPlayerState* PBGPlayerState = PBGPlayerController->GetPlayerState<APBGPlayerState>();
-	if (!ensure(PBGPlayerState != nullptr)) return;
-
-	PlayerStateData = { PBGPlayerState->GetbIsHost() ,PBGPlayerState->GetUserName() };
-}
-
-TPair<bool, FString> UPBGGameInstance::LoadPlayerStateData()
-{
-	return PlayerStateData;
-}
-
 void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
 	if (!Success)
@@ -128,7 +137,7 @@ void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 
 	PBGPlayerController->TurnOffMainMenu();
 
-	SavePlayerStateData();
+	bIsHost = true;
 
 	World->ServerTravel("/Game/Maps/Lobby?listen");
 }
@@ -191,8 +200,6 @@ void UPBGGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController != nullptr)) return;
 
-	SavePlayerStateData();
-
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
 
@@ -202,6 +209,7 @@ void UPBGGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDriver, EN
 	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
 	if (!ensure(PBGPlayerController != nullptr)) return;
 
+	bIsHost = false;
 	PBGPlayerController->LoadToMainMenuLevel();
 }
 

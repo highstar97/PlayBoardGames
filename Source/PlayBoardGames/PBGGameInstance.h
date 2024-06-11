@@ -20,6 +20,7 @@ public:
 };
 
 class FOnlineSessionSearch;
+class UPBGSaveGame;
 class UPBGMainMenuWidget;
 
 UCLASS()
@@ -33,6 +34,21 @@ public:
 	virtual void Init() override;
 
 public:
+	bool GetbIsHost() const { return bIsHost; }
+
+	UPBGSaveGame* GetPBGSaveGame() const { return PBGSaveGame; }
+
+	FString GetDesiredServerName() const { return DesiredServerName; }
+
+	void SetDesiredServerName(FString _DesiredServerName) { DesiredServerName = _DesiredServerName; }
+	
+	TArray<FPBGGame> GetPBGGames() { return PBGGames; }
+
+public:
+	void SaveGameData();
+
+	void LoadGameData(const FString& InputID);
+
 	void Host();
 
 	void Join(uint32 Index);
@@ -40,16 +56,6 @@ public:
 	void FindServerList();
 
 	void StartSession();
-
-	void SetDesiredServerName(FString _DesiredServerName) { DesiredServerName = _DesiredServerName; }
-	
-	FString GetDesiredServerName() { return DesiredServerName; }
-
-	TArray<FPBGGame> GetPBGGames() { return PBGGames; }
-
-	void SavePlayerStateData();
-
-	TPair<bool, FString> LoadPlayerStateData();
 
 private:
 	// Session
@@ -66,7 +72,9 @@ private:
 	void CreateSession();
 
 private:
-	TPair<bool, FString> PlayerStateData;
+	bool bIsHost;
+	
+	UPBGSaveGame* PBGSaveGame;
 
 	IOnlineSessionPtr SessionInterface;
 

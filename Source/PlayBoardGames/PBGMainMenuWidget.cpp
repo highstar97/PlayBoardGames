@@ -8,10 +8,20 @@
 
 #include "PBGGameInstance.h"
 #include "PBGPlayerController.h"
+#include "PBGLoginWidget.h"
+#include "PBGPlayerInfoWidget.h"
 #include "PBGServerRowWidget.h"
 
 UPBGMainMenuWidget::UPBGMainMenuWidget(const FObjectInitializer& Objectinitializer) : Super(Objectinitializer)
 {
+	bIsPlayerLogIn = false;
+	
+	static ConstructorHelpers::FClassFinder<UUserWidget> WBP_LoginWidgetClass(TEXT("/Game/Blueprints/MainMenu/WBP_LoginMenu"));
+	if (WBP_LoginWidgetClass.Succeeded())
+	{
+		LoginWidgetClass = WBP_LoginWidgetClass.Class;
+	}
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> BP_ServerRowClass(TEXT("/Game/Blueprints/MainMenu/WBP_ServerRow"));
 	if (BP_ServerRowClass.Succeeded())
 	{
@@ -44,6 +54,11 @@ void UPBGMainMenuWidget::TearDown()
 	FInputModeGameOnly InputModeGameOnly;
 	PBGPlayerController->SetInputMode(InputModeGameOnly);
 	PBGPlayerController->SetShowMouseCursor(false);
+}
+
+void UPBGMainMenuWidget::UpdatePlayerInfo(FString InputID)
+{
+	PlayerInfoWidget->SetID(InputID);
 }
 
 void UPBGMainMenuWidget::UpdateServerList(TArray<FServerData> ServerDatas)
@@ -86,7 +101,7 @@ bool UPBGMainMenuWidget::Initialize()
 	Button_Game1->OnClicked.AddDynamic(this, &UPBGMainMenuWidget::SwitchToJoinMenu);
 
 	if (!ensure(Button_CancelHost != nullptr)) return false;
-	Button_CancelHost->OnClicked.AddDynamic(this, &UPBGMainMenuWidget::SwitchToJoinMenu);
+	Button_CancelHost->OnClicked.AddDynamic(this, &UPBGMainMenuWidget::SwitchToSelectMenu);
 
 	if (!ensure(Button_HostServer != nullptr)) return false;
 	Button_HostServer->OnClicked.AddDynamic(this, &UPBGMainMenuWidget::HostServer);
@@ -163,6 +178,16 @@ void UPBGMainMenuWidget::SwitchToHostMenu()
 
 void UPBGMainMenuWidget::SwitchToJoinMenu()
 {
+	if (!bIsPlayerLogIn)
+	{
+		if (!ensure(LoginWidgetClass != nullptr)) return;
+		UPBGLoginWidget* PBGLoginWidget = CreateWidget<UPBGLoginWidget>(GetOwningPlayer(), LoginWidgetClass);
+		if (!ensure(PBGLoginWidget != nullptr)) return;
+
+		PBGLoginWidget->SetUp(this);
+		return;
+	}
+
 	if (!ensure(MenuSwitcher != nullptr)) return;
 	if (!ensure(JoinMenu != nullptr)) return;
 

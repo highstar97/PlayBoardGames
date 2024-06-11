@@ -1,5 +1,6 @@
 #include "LobbyPlayerController.h"
 
+#include "../PBGSaveGame.h"
 #include "../PBGGameInstance.h"
 #include "../PBGGameState.h"
 #include "../PBGPlayerState.h"
@@ -103,10 +104,13 @@ void ALobbyPlayerController::Client_UpdatePlayerState_Implementation()
 
 	UPBGGameInstance* PBGGameInstance = Cast<UPBGGameInstance>(World->GetGameInstance());
 	if (!ensure(PBGGameInstance != nullptr)) return;
+	
+	bIsHost = PBGGameInstance->GetbIsHost();
+	
+	UPBGSaveGame* PBGSaveGame = PBGGameInstance->GetPBGSaveGame();
+	if (!ensure(PBGSaveGame != nullptr)) return;
 
-	TPair<bool, FString> PlayerStateData = PBGGameInstance->LoadPlayerStateData();
-	bIsHost = PlayerStateData.Key;
-	UserName = PlayerStateData.Value;
+	UserName = PBGSaveGame->ID;
 
 	Server_UpdatePlayerState(bIsHost, UserName);
 }
