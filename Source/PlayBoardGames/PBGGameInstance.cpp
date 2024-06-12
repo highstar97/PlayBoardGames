@@ -53,7 +53,6 @@ void UPBGGameInstance::SaveGameData(const FString& InputID)
 {
 	if (UGameplayStatics::DoesSaveGameExist(InputID, 0))
 	{
-		PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
 		UGameplayStatics::SaveGameToSlot(PBGSaveGame, PBGSaveGame->SaveSlotName, PBGSaveGame->UserIndex);
 	}
 	else
@@ -70,7 +69,6 @@ void UPBGGameInstance::LoadGameData(const FString& InputID)
 {
 	if (UGameplayStatics::DoesSaveGameExist(InputID, 0))
 	{
-		PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
 		UE_LOG(LogTemp, Warning, TEXT("SaveGameExist"));
 	}
 	else
@@ -78,6 +76,7 @@ void UPBGGameInstance::LoadGameData(const FString& InputID)
 		SaveGameData(InputID);
 		UE_LOG(LogTemp, Warning, TEXT("No SaveGameExist"));
 	}
+	PBGSaveGame = Cast<UPBGSaveGame>(UGameplayStatics::LoadGameFromSlot(InputID, 0));
 }
 
 void UPBGGameInstance::Host()
@@ -141,12 +140,10 @@ void UPBGGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 	APBGPlayerController* PBGPlayerController = Cast<APBGPlayerController>(GetFirstLocalPlayerController());
 	if (!ensure(PBGPlayerController != nullptr)) return;
 
-	PBGPlayerController->Server_SetbIsHost(true);
-
 	PBGPlayerController->TurnOffMainMenu();
 
 	bIsHost = true;
-
+	
 	World->ServerTravel("/Game/Maps/Lobby?listen");
 }
 

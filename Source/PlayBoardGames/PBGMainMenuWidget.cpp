@@ -155,6 +155,16 @@ void UPBGMainMenuWidget::JoinServer()
 	{
 		if (SelectedIndex.IsSet())
 		{
+			UWorld* World = GetWorld();
+			if (!ensure(World != nullptr)) return;
+
+			UPBGGameInstance* PBGGameInstance = Cast<UPBGGameInstance>(World->GetGameInstance());
+			if (!ensure(PBGGameInstance != nullptr)) return;
+
+			if (!ensure(ScrollBox_ServerList != nullptr)) return;
+
+			FString DesiredServerName = Cast< UPBGServerRowWidget>(ScrollBox_ServerList->GetChildAt(SelectedIndex.GetValue()))->TextBlock_ServerName->GetText().ToString();
+			PBGGameInstance->SetDesiredServerName(DesiredServerName);
 			MainMenuInterface->Join(SelectedIndex.GetValue());
 		}
 	}

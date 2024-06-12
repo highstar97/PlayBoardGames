@@ -67,22 +67,6 @@ void APBGPlayerController::TurnOffMainMenu()
 	PBGMainMenu->TearDown();
 }
 
-void APBGPlayerController::Server_SetbIsHost_Implementation(const bool _bIsHost)
-{
-	APBGPlayerState* PBGPlayerState = GetPlayerState<APBGPlayerState>();
-	if (!ensure(PBGPlayerState != nullptr)) return;
-
-	PBGPlayerState->SetbIsHost(_bIsHost);
-}
-
-void APBGPlayerController::Server_SetUserName_Implementation(const FString& _UserName)
-{
-	APBGPlayerState* PBGPlayerState = GetPlayerState<APBGPlayerState>();
-	if (!ensure(PBGPlayerState != nullptr)) return;
-
-	PBGPlayerState->SetUserName(_UserName);
-}
-
 void APBGPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

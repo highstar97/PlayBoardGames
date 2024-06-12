@@ -18,7 +18,7 @@ void UYachtDiceSlotWidget::UpdateKeepWidget()
 	if (!ensure(World != nullptr)) return;
 
 	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
-	if (!ensure(YachtGameState != nullptr)) return;
+	if (YachtGameState == nullptr) return;
 
 	TArray<bool> KeepArray = YachtGameState->GetKeepArray();
 	for (int32 i = 0; i < KeepArray.Num(); ++i)
@@ -35,7 +35,7 @@ void UYachtDiceSlotWidget::UpdateDiceWidget()
 	if (!ensure(World != nullptr)) return;
 
 	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
-	if (!ensure(YachtGameState != nullptr)) return;
+	if (YachtGameState == nullptr) return;
 
 	TArray<int32> DiceArray = YachtGameState->GetDiceArray();
 	for (int32 i = 0; i < DiceArray.Num(); ++i)

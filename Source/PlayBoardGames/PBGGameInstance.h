@@ -72,8 +72,10 @@ private:
 	void CreateSession();
 
 private:
+	UPROPERTY()
 	bool bIsHost;
 	
+	UPROPERTY()
 	UPBGSaveGame* PBGSaveGame;
 
 	IOnlineSessionPtr SessionInterface;

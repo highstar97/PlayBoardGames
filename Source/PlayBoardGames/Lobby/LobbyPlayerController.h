@@ -27,7 +27,7 @@ public:
 	UFUNCTION(Server, unreliable)
 	void Server_UpdatePlayerState(const bool _bIsHost, const FString& _UserName);
 
-	UFUNCTION(Client , unreliable)
+	UFUNCTION(Client, unreliable)
 	void Client_UpdatePlayerState();
 
 	UFUNCTION(Server, unreliable)

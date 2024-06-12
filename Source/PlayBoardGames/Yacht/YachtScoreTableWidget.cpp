@@ -21,7 +21,7 @@ void UYachtScoreTableWidget::UpdateScoreWidget()
 	if (!ensure(World != nullptr)) return;
 
 	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
-	if (!ensure(YachtGameState != nullptr)) return;
+	if (YachtGameState == nullptr) return;
 
 	const bool& bIsPredicting = YachtGameState->GetbIsPredicting();
 
@@ -32,7 +32,7 @@ void UYachtScoreTableWidget::UpdateScoreWidget()
 	for (TObjectPtr<APlayerState> PlayerState : YachtGameState->PlayerArray)
 	{
 		AYachtPlayerState* YachtPlayerState = Cast<AYachtPlayerState>(PlayerState);
-		if (!ensure(YachtPlayerState != nullptr)) return;
+		if (YachtPlayerState == nullptr) return;
 
 		const int32& PlayerNumber = YachtPlayerState->GetPlayerNumber();
 

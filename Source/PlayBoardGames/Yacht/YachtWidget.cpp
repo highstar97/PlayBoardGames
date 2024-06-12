@@ -46,7 +46,7 @@ void UYachtWidget::UpdateYourNumber()
 	if (!ensure(TextBlock_YourNumber != nullptr)) return;
 
 	AYachtPlayerState* YachtPlayerState = GetOwningPlayerState<AYachtPlayerState>();
-	if (!ensure(YachtPlayerState != nullptr)) return;
+	if (YachtPlayerState == nullptr) return;
 	
 	FString TempString = TEXT("You're Player ");
 	TempString += FString::FromInt(YachtPlayerState->GetPlayerNumber());
@@ -62,7 +62,7 @@ void UYachtWidget::UpdatePlayerNumber()
 	if (!ensure(World != nullptr)) return;
 
 	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
-	if (!ensure(YachtGameState != nullptr)) return;
+	if (YachtGameState == nullptr) return;
 
 	FString TempString = TEXT("Player ");
 	TempString += FString::FromInt(YachtGameState->GetWhichPlayerTurn());
@@ -79,7 +79,7 @@ void UYachtWidget::UpdateRemainingTurn()
 	if (!ensure(World != nullptr)) return;
 
 	AYachtGameState* YachtGameState = Cast<AYachtGameState>(World->GetGameState());
-	if (!ensure(YachtGameState != nullptr)) return;
+	if (YachtGameState == nullptr) return;
 
 	FString TempString = TEXT("Turn ");
 	TempString += FString::FromInt(YachtGameState->GetRemainingTurn());

@@ -32,12 +32,6 @@ public:
 
 	void TurnOffMainMenu();
 
-	UFUNCTION(Server, unreliable)
-	void Server_SetbIsHost(const bool _bIsHost);
-
-	UFUNCTION(Server, unreliable)
-	void Server_SetUserName(const FString& _UserName);
-
 protected:
 	virtual void BeginPlay() override;
 

@@ -95,6 +95,8 @@ void ALobbyPlayerController::Server_UpdatePlayerState_Implementation(const bool 
 
 	PBGPlayerState->SetbIsHost(_bIsHost);
 	PBGPlayerState->SetUserName(_UserName);
+
+	//PBGPlayerState->ForceNetUpdate();
 }
 
 void ALobbyPlayerController::Client_UpdatePlayerState_Implementation()
@@ -105,11 +107,10 @@ void ALobbyPlayerController::Client_UpdatePlayerState_Implementation()
 	UPBGGameInstance* PBGGameInstance = Cast<UPBGGameInstance>(World->GetGameInstance());
 	if (!ensure(PBGGameInstance != nullptr)) return;
 	
-	bIsHost = PBGGameInstance->GetbIsHost();
-	
 	UPBGSaveGame* PBGSaveGame = PBGGameInstance->GetPBGSaveGame();
 	if (!ensure(PBGSaveGame != nullptr)) return;
 
+	bIsHost = PBGGameInstance->GetbIsHost();
 	UserName = PBGSaveGame->ID;
 
 	Server_UpdatePlayerState(bIsHost, UserName);
