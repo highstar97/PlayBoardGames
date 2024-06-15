@@ -8,6 +8,7 @@ class UTextBlock;
 class UButton;
 class UYachtScoreTableWidget;
 class UYachtDiceSlotWidget;
+class UYachtAchieveWidget;
 
 UCLASS()
 class PLAYBOARDGAMES_API UYachtWidget : public UUserWidget
@@ -15,8 +16,14 @@ class PLAYBOARDGAMES_API UYachtWidget : public UUserWidget
 	GENERATED_BODY()
 		
 public:
+	void SetUp();
+	
+	void TearDown();
+
 	UFUNCTION()
 	void Roll();
+
+	void ShowAchieveWidget(int32 NumOfAchieve, const FString& AchieveScore);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -52,4 +59,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
 	UYachtDiceSlotWidget* DiceSlotWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = "Playing", meta = (BindWidget))
+	UYachtAchieveWidget* YachtAchieveWidget;
 };

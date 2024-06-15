@@ -16,10 +16,7 @@ UPBGGameInstance::UPBGGameInstance()
 	bIsHost = false;
 	// TODO : Make it more simply.
 	PBGGames.Empty();
-	FPBGGame Null;
-	PBGGames.Add(Null);
-	FPBGGame Yacht("Yacht");
-	PBGGames.Add(Yacht);
+	PBGGames = { FPBGGame("Null"), FPBGGame("Yacht") };
 }
 
 void UPBGGameInstance::Init()

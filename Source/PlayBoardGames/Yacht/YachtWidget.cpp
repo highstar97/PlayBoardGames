@@ -9,6 +9,33 @@
 #include "YachtPlayerController.h"
 #include "YachtScoreTableWidget.h"
 #include "YachtDiceSlotWidget.h"
+#include "YachtAchieveWidget.h"
+
+void UYachtWidget::SetUp()
+{
+	this->AddToViewport();
+
+	FInputModeUIOnly InputModeUIOnly;
+	InputModeUIOnly.SetWidgetToFocus(this->TakeWidget());
+	InputModeUIOnly.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(GetOwningPlayer());
+	if (!ensure(YachtPlayerController != nullptr)) return;
+	YachtPlayerController->SetInputMode(InputModeUIOnly);
+	YachtPlayerController->SetShowMouseCursor(true);
+}
+
+void UYachtWidget::TearDown()
+{
+	this->RemoveFromParent();
+
+	FInputModeGameOnly InputModeGameOnly;
+
+	AYachtPlayerController* YachtPlayerController = Cast<AYachtPlayerController>(GetOwningPlayer());
+	if (!ensure(YachtPlayerController != nullptr)) return;
+	YachtPlayerController->SetInputMode(InputModeGameOnly);
+	YachtPlayerController->SetShowMouseCursor(false);
+}
 
 void UYachtWidget::Roll()
 {
@@ -101,4 +128,13 @@ void UYachtWidget::UpdateScoreTableWidget()
 	if (!ensure(ScoreTableWidget != nullptr)) return;
 
 	ScoreTableWidget->UpdateScoreWidget();
+}
+
+void UYachtWidget::ShowAchieveWidget(int32 NumOfAchieve, const FString& AchieveScore)
+{
+	if (!ensure(YachtAchieveWidget != nullptr)) return;
+
+	YachtAchieveWidget->SetVisibility(ESlateVisibility::Visible);
+	YachtAchieveWidget->UpdateWidget(NumOfAchieve, AchieveScore);
+	YachtAchieveWidget->PlayShowAnimation();
 }

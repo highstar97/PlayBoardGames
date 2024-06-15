@@ -8,6 +8,10 @@ USTRUCT(BlueprintType)
 struct FYachtSaveData
 {
 	GENERATED_USTRUCT_BODY()
+
+public:
+    UPROPERTY()
+    TMap<FString, int32> NumOfAchieves;
 };
 
 UCLASS()

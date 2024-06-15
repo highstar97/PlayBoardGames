@@ -1,9 +1,13 @@
 #include "YachtPlayerController.h"
 
+#include "GameFramework/GameplayMessageSubsystem.h"
+
 #include "YachtGameMode.h"
 #include "YachtGameState.h"
 #include "YachtPlayerState.h"
+#include "YachtAchievementComponent.h"
 #include "YachtWidget.h"
+#include "YachtAchieveWidget.h"
 
 AYachtPlayerController::AYachtPlayerController()
 {
@@ -12,31 +16,24 @@ AYachtPlayerController::AYachtPlayerController()
 	{
 		YachtWidgetClass = BP_YachtWidgetClass.Class;
 	}
-}
 
-void AYachtPlayerController::TurnOnYachtWidget()
-{
-	if (!ensure(YachtWidget != nullptr)) return;
-	
-	YachtWidget->AddToViewport();
+	AchievementDataMap =
+	{
+		{ 0, FAchievementScoreMessage(0, "One")},
+		{ 1, FAchievementScoreMessage(0, "Two")},
+		{ 2, FAchievementScoreMessage(0, "Three")},
+		{ 3, FAchievementScoreMessage(0, "Four")},
+		{ 4, FAchievementScoreMessage(0, "Five")},
+		{ 5, FAchievementScoreMessage(0, "Six")},
+		{ 6, FAchievementScoreMessage(0, "Choice")},
+		{ 7, FAchievementScoreMessage(0, "4OfAKind")},
+		{ 8, FAchievementScoreMessage(0, "FullHouse")},
+		{ 9, FAchievementScoreMessage(0, "SmallStraight")},
+		{ 10, FAchievementScoreMessage(0, "LargeStraight")},
+		{ 11, FAchievementScoreMessage(0, "Yacht")},
+	};
 
-	FInputModeUIOnly InputModeUIOnly;
-	InputModeUIOnly.SetWidgetToFocus(YachtWidget->TakeWidget());
-	InputModeUIOnly.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	SetInputMode(InputModeUIOnly);
-	SetShowMouseCursor(true);
-}
-
-void AYachtPlayerController::TurnOffYachtWidget()
-{
-	if (!ensure(YachtWidget != nullptr)) return;
-
-	YachtWidget->RemoveFromParent();
-
-	FInputModeGameOnly InputModeGameOnly;
-	SetInputMode(InputModeGameOnly);
-	SetShowMouseCursor(false);
+	AchievementComponent = CreateDefaultSubobject<UYachtAchievementComponent>(TEXT("AchievementComponent"));
 }
 
 void AYachtPlayerController::Server_ToggleKeep_Implementation(const int32 Index)
@@ -131,8 +128,18 @@ void AYachtPlayerController::Server_FixScore_Implementation(const int32 PlayerNu
 	// Call GameState's FinishTurn()
 	YachtGameState->FinishTurn();
 
+	// [Client] Boradcast Message
+	Client_SendAchieveScoreMessage(YachtGameState->GetPredictArray()[Index], Index);
+
 	YachtGameState->ForceNetUpdate();
 	YachtPlayerState->ForceNetUpdate();
+}
+
+void AYachtPlayerController::ShowAchieveWidget(int32 NumOfAchieve, const FString& AchieveScore)
+{
+	if (!ensure(YachtWidget != nullptr)) return;
+
+	YachtWidget->ShowAchieveWidget(NumOfAchieve, AchieveScore);
 }
 
 void AYachtPlayerController::BeginPlay()
@@ -145,6 +152,19 @@ void AYachtPlayerController::BeginPlay()
 		YachtWidget = CreateWidget<UYachtWidget>(this, YachtWidgetClass);
 		
 		if (!ensure(YachtWidget != nullptr)) return;
-		TurnOnYachtWidget();
+		YachtWidget->SetUp();
 	}
+}
+
+void AYachtPlayerController::Client_SendAchieveScoreMessage_Implementation(const int32 FixedScore, int32 AchieveHandIndex)
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	FGameplayTag Channel = FGameplayTag::RequestGameplayTag(FName("Achieve.Score"));
+	FAchievementScoreMessage Message = AchievementDataMap[AchieveHandIndex];
+	Message.EarnedScore = FixedScore;
+
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(World);
+	MessageSystem.BroadcastMessage(Channel, Message);
 }
