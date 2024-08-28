@@ -1,6 +1,7 @@
 # PlayBoardGames
 ## 🖥️ 프로젝트 소개 [(Notion link)](https://www.notion.so/highstar9z6/Play-Board-Games-7626b16a46dd434b8d2fd51a20e29a92)
 주사위를 굴리고 조합하여 획득한 점수를 경쟁하는 멀티 플레이 Yacht 게임
+
 로컬플레이 게임으로 제작했던 Yacht를 멀티플레이 게임으로 변환하며 **멀티플레이 게임의 제작 방식**을 익히기 위해 시작되었습니다.
 
 #### ⚙️ 개발 환경
