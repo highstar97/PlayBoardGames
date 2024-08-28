@@ -22,3 +22,5 @@
 - RPC와 Replicate를 통한 동기화
 #### 업적 시스템
 - Gameplay Message Router를 사용한 구현
+
+자세한 내용은 🖥️ 프로젝트 소개 옆 Notion link에서 확인 가능합니다.
